@@ -3,6 +3,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, signOut,  onAuthStateChan
 import axios from 'axios';
 
 const adresaServer = 'http://localhost:5000';
+const adresaServer_ai = 'http://localhost:4000';
 
 function milisecGreenwich() {
     let  date = new Date(); 
@@ -54,4 +55,4 @@ function stergemUtilizatorul(){
 
 // <<<==== firebase
 
-export { adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
+export { adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}

@@ -1,16 +1,17 @@
 import React from 'react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { adresaServer, provider, auth, milisecGreenwich } from '../diverse';
+import { adresaServer_ai, adresaServer, provider, auth, milisecGreenwich, neDeconectam } from '../diverse';
 import { signInWithPopup } from "firebase/auth";
-import {firebaseConfig, stergemUtilizatorul, neDeconectam} from '../diverse';
 import {ContextUser} from '../App.js';
+import { useNavigate } from "react-router-dom";
 
 
 
 const Home = () => {
+  const navigate = useNavigate();
   const [user, setUser] = React.useContext(ContextUser);
-  const [scrisInTestarea, setScrisInTestarea] = useState('')
+  const [scrisInTextarea, setScrisInTextarea] = useState('')
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
 
   function neConectamCuGoogle(){
@@ -39,14 +40,28 @@ const Home = () => {
   }, [user])
 
   function trimiteMesaj(){
+    if(!scrisInTextarea.length)return;
     axios.get("https://api.ipify.org/?format=json").then((data)=>{
       const adresa = data.data.ip;
       axios.post(`${adresaServer}/verificamCrediteGratis`, {ip_address: adresa}).then((data)=>{
-        console.log(data.data);
-        if(data.data > 3){
+        // console.log(data.data[0].result);
+        if(data.data[0].result >  3 /*  =>> sa mut aici 3 */){
           console.log('ai folosit deja prea multe mesaje gratis')
         }else{
-          // aici las sa faca query ul
+          // fetch(`http://127.0.0.1:4000/send_mes`, {method:'POST', body: JSON.stringify({ intrebare: scrisInTextarea, context: 'aici dau contextul'}), headers:{
+          // "Content-Type": "application/json",  /* "responseType": "stream" */
+          // }}).then((response)=>{console.log(response)})
+          setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: scrisInTextarea}, {tip_mesaj: 'raspuns', mesaj: ''}])
+          axios.post(`${adresaServer_ai}/send_mes`, { context: [...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: scrisInTextarea}]}).then((data)=>{
+            console.log(data, '-------------')
+            setArrayCuMesaje((obiecte)=>{
+              console.log(data.data);
+              obiecte[obiecte.length - 1].mesaj += data.data;
+              return [...obiecte];
+            })
+            // console.log(data.data);
+            setScrisInTextarea('')
+          });
         }
       })
     })
@@ -56,31 +71,56 @@ const Home = () => {
   return (
     <div  className='background' >
 
+      
       {/* divul de sus */}
-      <div>
-
-        <h1>{user.uid}</h1>
-
-        <button onClick={()=>{stergemUtilizatorul(); setUser(false)}} >Stergemmmm</button>
-        
-        <button  onClick={()=>{neDeconectam(); setUser(false)}} >Deconectam</button>
 
 
-        <button onClick={neConectamCuGoogle} className="gsi-material-button">
-          <div className="gsi-material-button-state"></div>
-          <div className="gsi-material-button-content-wrapper">
-            <div className="gsi-material-button-icon">
-              <svg version="1.1"  viewBox="0 0 48 48"  style={{display: 'block'}}>
-                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
-                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
-                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
-                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
-                <path fill="none" d="M0 0h48v48H0z"></path>
-              </svg>
+      <div className='divSus' >
+
+        <nav className=" 
+        border-gray-200 ">
+          <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
+            <a className="flex items-center space-x-3 rtl:space-x-reverse">
+            </a>
+            <div className="flex items-center space-x-6 rtl:space-x-reverse">
+              {!user ?
+                <button onClick={neConectamCuGoogle} type="button" className="text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 me-2 mb-2">
+                  <svg className="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 19">
+                    <path fillRule="evenodd" d="M8.842 18.083a8.8 8.8 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.8-8.652h.153a8.464 8.464 0 0 1 5.7 2.257l-2.193 2.038A5.27 5.27 0 0 0 9.09 3.4a5.882 5.882 0 0 0-.2 11.76h.124a5.091 5.091 0 0 0 5.248-4.057L14.3 11H9V8h8.34c.066.543.095 1.09.088 1.636-.086 5.053-3.463 8.449-8.4 8.449l-.186-.002Z" clipRule="evenodd"/>
+                  </svg>
+                  Sign in with Google
+                </button>
+                : 
+                <button  onClick={()=>{navigate('/chatPage')}} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                  Continue
+                  <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                  </svg>
+                </button>
+              }
             </div>
-            <span className="gsi-material-button-contents">Connect with Google</span>
           </div>
-        </button>
+        </nav>
+        <nav className="bg-gray-50 dark:bg-gray-700">
+            <div className="max-w-screen-xl px-4 py-3 mx-auto">
+                <div className="flex items-center">
+                    <ul className="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
+                        <li>
+                            <a  className="text-gray-900 dark:text-white hover:underline" aria-current="page">Home</a>
+                        </li>
+                        <li>
+                            <a className="text-gray-900 dark:text-white hover:underline">Company</a>
+                        </li>
+                        <li>
+                            <a className="text-gray-900 dark:text-white hover:underline">Team</a>
+                        </li>
+                        <li>
+                            <button onClick={neDeconectam} className="text-gray-900 dark:text-white hover:underline">Deconecteaza te </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
       </div>
 
@@ -88,21 +128,30 @@ const Home = () => {
       <div className='divConversatie'  >
 
         <div>
-          {/*
-    
-          <div  className="flex items-start gap-2.5 marginDreaptaCovAi justify-end">
-            <div className="divIntrebareAi flex  max-w-[400px]  p-4 border-gray-200 rounded-l-xl rounded-tr-xl dark:bg-gray-700">
-              
-              <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">mesajjj</p>
-            </div>
-          </div>
 
-          <div  className="flex items-start gap-2.5 marginStangaCovAi ">
-            <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
-              <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">mesajjjjjj</p>   
-            </div>
-          </div>
-        */}
+          {arrayCuMesaje.map((obiect, index)=>{
+
+            if(obiect.tip_mesaj === 'intrebare'){
+              return <div key={index} className="flex items-start gap-2.5 marginDreaptaCovAi justify-end">
+                <div className="divIntrebareAi flex  max-w-[400px]  p-4 border-gray-200 rounded-l-xl rounded-tr-xl dark:bg-gray-700">
+                
+                  <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>
+                </div>
+              </div>
+            }else{
+              return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
+                <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
+                  <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>   
+                </div>
+              </div>
+            } 
+          })}
+          
+    
+         
+
+          
+       
 
 
         </div>
@@ -110,9 +159,9 @@ const Home = () => {
 
         <div>
           <div className="flex items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
-            <textarea onChange={(e)=>{setScrisInTestarea(e.target.value)}}  value={scrisInTestarea} id="chat" rows="1" className="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..."></textarea>
+            <textarea onChange={(e)=>{setScrisInTextarea(e.target.value)}}  value={scrisInTextarea} id="chat" rows="1" className="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..."></textarea>
             <button
-            onClick={trimiteMesaj}
+            onClick={()=>{if(scrisInTextarea.length)trimiteMesaj()}}
             type="submit" className="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
               <svg className="w-5 h-5 rotate-90 rtl:-rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
                 <path d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z"/>
@@ -125,7 +174,7 @@ const Home = () => {
 
 
       <div>
-        <p>Partea de jos interactiva !!!!!!!!!!!!!</p>
+        <p>Aici sa fac o parte de statistici cu top 100 grame proteina vitamina etc</p>
         
       </div>
       
