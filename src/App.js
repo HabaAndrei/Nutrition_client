@@ -30,7 +30,6 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="chatPage" element={<Chat_page />} />
-
           </Routes>
         </Router>
       </ContextUser.Provider>

@@ -78,15 +78,31 @@ code {
   display: flex;
   
   width: 100%;
-  height: 100px; /* Înălțimea divului principal */
-  /* border: 1px solid black; */
+  height: 100px; 
 }
 .divStanga, .divDreapta {
-  flex: 1; /* Aceste divuri vor ocupa spațiul disponibil */
-  height: 100%; /* Aceleași înălțimi cu divul principal */
+  height: 100%; 
+  padding: 10px;
 }
-.linie {
-  width: 1px; /* Lățimea liniei */
+.divStanga {
+  border-right: 2px solid grey;
+}
+.fullPage-second{
   height: 100%;
-  background-color: black; /* Culoarea liniei */
+  display: flex;
+  flex-direction: column;
+}
+
+.mes_part{
+  height: 80%;
+  overflow-y: scroll;
+
+}
+.input_part{
+  flex-grow: 1;
+}
+
+
+.mes_part::-webkit-scrollbar {
+  display: none; 
 }

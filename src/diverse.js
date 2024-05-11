@@ -44,13 +44,17 @@ function neDeconectam(){
 function stergemUtilizatorul(){
     const user = auth.currentUser;
    
-    deleteUser(user).then(() => {
-        axios.post(`${adresaServer}/stergemUtilizatorul`, {uid: user.uid}).then((data)=>{
-            console.log(data);
-        })
-    }).catch((error) => {
-        console.log(error);
-    });
+    try{
+        deleteUser(user).then(() => {
+            axios.post(`${adresaServer}/stergemUtilizatorul`, {uid: user.uid}).then((data)=>{
+                console.log(data);
+            })
+        }).catch((error) => {
+            console.log(error);
+        });
+    }catch(err){
+        console.log(err);
+    }
 }
 
 // <<<==== firebase

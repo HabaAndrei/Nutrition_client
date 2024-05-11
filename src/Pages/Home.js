@@ -1,10 +1,11 @@
 import React from 'react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { adresaServer_ai, adresaServer, provider, auth, milisecGreenwich, neDeconectam } from '../diverse';
+import { stergemUtilizatorul, adresaServer_ai, adresaServer, provider, auth, milisecGreenwich, neDeconectam } from '../diverse';
 import { signInWithPopup } from "firebase/auth";
 import {ContextUser} from '../App.js';
 import { useNavigate } from "react-router-dom";
+
 
 
 
@@ -19,11 +20,15 @@ const Home = () => {
     .then((result) => {
         const user = result.user;
         const milisec = milisecGreenwich();
-        axios.post(`${adresaServer}/insertDateU_google`, {
-        uid: user.uid, email:user.email, name: user.displayName, milisec,  metoda_creare: 'google'
-        }).then((data)=>{
-        // console.log(data);
-        })
+        try{
+          axios.post(`${adresaServer}/insertDateU_google`, {
+            uid: user.uid, email:user.email, name: user.displayName, milisec,  metoda_creare: 'google'
+            }).then((data)=>{
+            // console.log(data);
+          })
+        }catch (err){
+          console.log(err);
+        }
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -41,30 +46,34 @@ const Home = () => {
 
   function trimiteMesaj(){
     if(!scrisInTextarea.length)return;
-    axios.get("https://api.ipify.org/?format=json").then((data)=>{
-      const adresa = data.data.ip;
-      axios.post(`${adresaServer}/verificamCrediteGratis`, {ip_address: adresa}).then((data)=>{
-        // console.log(data.data[0].result);
-        if(data.data[0].result >  3 /*  =>> sa mut aici 3 */){
-          console.log('ai folosit deja prea multe mesaje gratis')
-        }else{
-          // fetch(`http://127.0.0.1:4000/send_mes`, {method:'POST', body: JSON.stringify({ intrebare: scrisInTextarea, context: 'aici dau contextul'}), headers:{
-          // "Content-Type": "application/json",  /* "responseType": "stream" */
-          // }}).then((response)=>{console.log(response)})
-          setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: scrisInTextarea}, {tip_mesaj: 'raspuns', mesaj: ''}])
-          axios.post(`${adresaServer_ai}/send_mes`, { context: [...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: scrisInTextarea}]}).then((data)=>{
-            console.log(data, '-------------')
-            setArrayCuMesaje((obiecte)=>{
-              console.log(data.data);
-              obiecte[obiecte.length - 1].mesaj += data.data;
-              return [...obiecte];
-            })
-            // console.log(data.data);
-            setScrisInTextarea('')
-          });
-        }
+    try{
+      axios.get("https://api.ipify.org/?format=json").then((data)=>{
+        const adresa = data.data.ip;
+        axios.post(`${adresaServer}/verificamCrediteGratis`, {ip_address: adresa}).then((data)=>{
+          
+          if(data.data[0].result >  5 /*  =>> sa mut aici 3 */){
+            console.log('ai folosit deja prea multe mesaje gratis')
+          }else{
+            // fetch(`http://127.0.0.1:4000/send_mes`, {method:'POST', body: JSON.stringify({ intrebare: scrisInTextarea, context: 'aici dau contextul'}), headers:{
+            // "Content-Type": "application/json",  /* "responseType": "stream" */
+            // }}).then((response)=>{console.log(response)})
+            setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: scrisInTextarea}, {tip_mesaj: 'raspuns', mesaj: ''}])
+            axios.post(`${adresaServer_ai}/send_mes`, { context: [...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: scrisInTextarea}]}).then((data)=>{
+              console.log(data, '-------------')
+              setArrayCuMesaje((obiecte)=>{
+                console.log(data.data);
+                obiecte[obiecte.length - 1].mesaj += data.data;
+                return [...obiecte];
+              })
+              // console.log(data.data);
+              setScrisInTextarea('')
+            });
+          }
+        })
       })
-    })
+    }catch (err){
+      console.log(err);
+    }
   }
   
 
@@ -112,7 +121,7 @@ const Home = () => {
                             <a className="text-gray-900 dark:text-white hover:underline">Company</a>
                         </li>
                         <li>
-                            <a className="text-gray-900 dark:text-white hover:underline">Team</a>
+                            <button onClick={stergemUtilizatorul} className="text-gray-900 dark:text-white hover:underline">Delete user</button>
                         </li>
                         <li>
                             <button onClick={neDeconectam} className="text-gray-900 dark:text-white hover:underline">Deconecteaza te </button>
@@ -146,13 +155,6 @@ const Home = () => {
               </div>
             } 
           })}
-          
-    
-         
-
-          
-       
-
 
         </div>
 
