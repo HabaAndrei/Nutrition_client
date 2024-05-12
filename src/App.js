@@ -1,6 +1,7 @@
 import React, { useEffect, createContext, useState } from 'react'
 import Home from './Pages/Home.js';
 import Chat_page from './Pages/Chat_page.js';
+import Settings from './Pages/Settings.js';
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 import { adresaServer, auth, } from './diverse.js';
@@ -28,6 +29,7 @@ const App = () => {
         <Router>
 
           <Routes>
+            <Route path="settings" element={<Settings />} />
             <Route path="/" element={<Home />} />
             <Route path="chatPage" element={<Chat_page />} />
           </Routes>
@@ -38,3 +40,7 @@ const App = () => {
 }
 
 export { App, ContextUser}
+
+
+// fac o functie univeral pt a stoca mesajele din cov si rap, difereta intre ele este 
+//  =>> doar la un parametru conv si rap

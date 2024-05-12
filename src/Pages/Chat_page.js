@@ -4,12 +4,18 @@ import Rap from '../Components/Rap.js';
 import SplitPane, { Pane } from 'split-pane-react';
 import 'split-pane-react/esm/themes/default.css';
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+
 
 
 const Chat_page = () => {
 
+  const navigate = useNavigate();
   const [sizes, setSizes] = useState(['50%', '50%']);
-  
+  const [isModalConvOpen, setIsModalConvOpen] = useState(false);
+  const [isModalRapOpen, setIsModalRapOpen] = useState(false);
+
+
   const layoutCSS = {
     height: '100%',
     display: 'flex',
@@ -22,9 +28,6 @@ const Chat_page = () => {
 
   return (
     <div className='fullPageChat'  >
-
-
-
  
       <div className='navbarChat' >
         <nav className="bg-gray-50 dark:bg-gray-700">
@@ -32,16 +35,24 @@ const Chat_page = () => {
             <div className="flex items-center">
               <ul className="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
                 <li>
-                  <a href="#" className="text-gray-900 dark:text-white hover:underline" aria-current="page">Home</a>
+                  <button onClick={()=>navigate('/')}  className="text-gray-900 dark:text-white hover:underline" aria-current="page">Home</button>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-900 dark:text-white hover:underline">Company</a>
+                  <button onClick={()=>navigate('/settings')}  className="text-gray-900 dark:text-white hover:underline">Settings</button>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-900 dark:text-white hover:underline">Team</a>
+                  <button
+                    onClick={()=>{setIsModalConvOpen(!isModalConvOpen)}}
+                    id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" className="text-gray-900 dark:text-white hover:underline" >
+                    Conversatii
+                  </button>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-900 dark:text-white hover:underline">Features</a>
+                  <button
+                    onClick={()=>{setIsModalRapOpen(!isModalRapOpen)}}
+                    id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" className="text-gray-900 dark:text-white hover:underline" >
+                    Rapoarte
+                  </button>                
                 </li>
               </ul>
             </div>
@@ -62,12 +73,12 @@ const Chat_page = () => {
           
           <Pane minSize={5} maxSize='95%'>
             <div className='divStanga'>
-              <Conv/>
+              <Conv isModalConvOpen={isModalConvOpen}  />
             </div>
           </Pane>
           <Pane minSize={5} maxSize='95%'>
             <div className='divDreapta'>
-              <Rap/>
+              <Rap isModalRapOpen={isModalRapOpen}  />
             </div>
           </Pane>
 

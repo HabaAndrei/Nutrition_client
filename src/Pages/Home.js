@@ -49,25 +49,48 @@ const Home = () => {
     try{
       axios.get("https://api.ipify.org/?format=json").then((data)=>{
         const adresa = data.data.ip;
+
+
         axios.post(`${adresaServer}/verificamCrediteGratis`, {ip_address: adresa}).then((data)=>{
           
           if(data.data[0].result >  5 /*  =>> sa mut aici 3 */){
             console.log('ai folosit deja prea multe mesaje gratis')
           }else{
-            // fetch(`http://127.0.0.1:4000/send_mes`, {method:'POST', body: JSON.stringify({ intrebare: scrisInTextarea, context: 'aici dau contextul'}), headers:{
-            // "Content-Type": "application/json",  /* "responseType": "stream" */
-            // }}).then((response)=>{console.log(response)})
+            
             setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: scrisInTextarea}, {tip_mesaj: 'raspuns', mesaj: ''}])
-            axios.post(`${adresaServer_ai}/send_mes`, { context: [...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: scrisInTextarea}]}).then((data)=>{
-              console.log(data, '-------------')
-              setArrayCuMesaje((obiecte)=>{
-                console.log(data.data);
-                obiecte[obiecte.length - 1].mesaj += data.data;
-                return [...obiecte];
-              })
-              // console.log(data.data);
-              setScrisInTextarea('')
-            });
+            fetch(`${adresaServer_ai}/send_mes`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                "responseType": "stream"
+              },
+              body: JSON.stringify({ context: [...arrayCuMesaje, { tip_mesaj: 'intrebare', mesaj: scrisInTextarea }] })
+            })
+            .then((response)=>{
+
+              setScrisInTextarea('');
+
+              let reader = response.body.getReader();
+              const decoder = new TextDecoder();
+              
+              function readStream(){
+                reader.read().then(({done, value})=>{
+                  if(done){
+                    console.log('este gata maiii')
+                  }else{
+                    let cuv =  decoder.decode(value, {stream: true});
+                    setArrayCuMesaje((obiecte)=>{
+                      obiecte[obiecte.length - 1].mesaj += cuv;
+                      return [...obiecte];
+                    })
+                    readStream();
+                  }
+                });
+              }
+
+              readStream();
+
+            })
           }
         })
       })

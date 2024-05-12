@@ -1,6 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut,  onAuthStateChanged, deleteUser } from "firebase/auth";
 import axios from 'axios';
+import uuid from 'react-uuid';
+
 
 const adresaServer = 'http://localhost:5000';
 const adresaServer_ai = 'http://localhost:4000';
@@ -59,4 +61,33 @@ function stergemUtilizatorul(){
 
 // <<<==== firebase
 
-export { adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
+
+function deruleazaInJos (id){
+    const element = document.getElementById(id);
+    element.scrollTop = element.scrollHeight;
+  
+  };
+// =>>> parametru url
+
+
+function creamIdConversatie(id_name){
+    const id = uuid().slice(0, 10);
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set(id_name, id);
+    window.history.pushState(null, '', `${window.location.pathname}?${urlParams}`);  
+    return id;
+}
+
+function stergemParamDinUrl(param){
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.delete(param);
+    window.history.pushState(null, '', `${window.location.pathname}?${urlParams}`);
+}
+
+function luamIdDinUrl(param){
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+// <<<<====== parametru url
+
+export {creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
