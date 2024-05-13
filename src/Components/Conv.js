@@ -2,29 +2,43 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {ContextUser} from '../App.js';
-import {creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
+import {punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
 
 const Conv = (props) => {
 
-
-  // console.log(props.isModalConvOpen)
   const [user, setUser] = React.useContext(ContextUser);
   const [textInInput, setTextInInput] = useState('');
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
+  const [arCuConversatii, setCuConversatii] = useState([]);
+  const [ar_mes_stream, setAr_Mes_Stream] = useState([]);
 
-  //  a3a756a0-1
+  useEffect(()=>{
+    const id_conversatie = luamIdDinUrl('conv')
+    luamConversatiaDupaId(id_conversatie);
+  }, [])
+
+  useEffect(()=>{
+    deruleazaInJos('scrollJos_doi');
+  }, [arrayCuMesaje])
+  
+  useEffect(()=>{
+    if(props.isModalConvOpen){getConvFromDB('conv', user.uid)};
+  }, [props.isModalConvOpen])
+
+  useEffect(()=>{
+    if(!ar_mes_stream.length)return;
+    setArrayCuMesaje((prev)=>{
+      prev[prev.length - 1].mesaj = [...ar_mes_stream].join('');
+      return [...prev];
+    })
+    console.log([...ar_mes_stream].join(''));
+  }, [ar_mes_stream])
 
   function luamConversatiaDupaId(id_conversatie){
     axios.post(`${adresaServer}/getConvWithId`, {id_conversatie}).then((data)=>{
       setArrayCuMesaje(data.data);
     })
   }
-
-
-  useEffect(()=>{
-    const id_conversatie = luamIdDinUrl('conv')
-    luamConversatiaDupaId(id_conversatie);
-  }, [])
 
 
   
@@ -40,7 +54,7 @@ const Conv = (props) => {
         }, {tip_mesaj: 'raspuns', mesaj: raspuns}], 
         id_conversatie: id_conversatie_din_url, data: milisecGreenwich(), uid: user.uid, conversatie: 'conv'}
       ).then((data)=>{
-          console.log(data);
+          // console.log(data);
         }
       )
     }catch(err){
@@ -58,7 +72,7 @@ const Conv = (props) => {
         'Content-Type': 'application/json',
         "responseType": "stream"
       },
-      body: JSON.stringify({ context: [...arrayCuMesaje, { tip_mesaj: 'intrebare', mesaj: textInInput }] })
+      body: JSON.stringify({ context: [...arrayCuMesaje?.slice(-4), { tip_mesaj: 'intrebare', mesaj: textInInput }] })
     })
     .then((response)=>{
       let raspunsul_stream = ''
@@ -70,16 +84,12 @@ const Conv = (props) => {
       function readStream(){
         reader.read().then(({done, value})=>{
           if(done){
-            console.log('este gata maiii');
             stocamMesajeleInDB(intrebare, raspunsul_stream);
           }else{
             let cuv =  decoder.decode(value, {stream: true});
             raspunsul_stream += cuv;
-            setArrayCuMesaje((obiecte)=>{
-              obiecte[obiecte.length - 1].mesaj += cuv;
-              return [...obiecte];
-            })
-            // console.log('inca vine!! =>>>>',  cuvant+=cuv);
+            setAr_Mes_Stream(prev => [...prev, cuv]);
+
             readStream();
           }
         });
@@ -91,19 +101,22 @@ const Conv = (props) => {
   }
 
 
-  useEffect(()=>{
-    deruleazaInJos('scrollJos_doi');
-  }, [arrayCuMesaje])
 
   function getConvFromDB(conversatie, uid){
     axios.post(`${adresaServer}/getConvFromDB` , {conversatie, uid}).then((data)=>{
-      console.log(data);
+      setCuConversatii(data.data);
     })
   }
 
-  useEffect(()=>{
-    if(props.isModalConvOpen)getConvFromDB('conv', user.uid);
-  }, [props.isModalConvOpen])
+
+
+  function getMesFromDB(id_conversatie){
+    axios.post(`${adresaServer}/getMesFromDB`, {id_conversatie}).then((data)=>{
+      setArrayCuMesaje(data.data);
+      punemAltIdInUrl('conv', id_conversatie);
+
+    })
+  }
 
   return (
     <div className='fullPage-second' >
@@ -113,34 +126,19 @@ const Conv = (props) => {
 
       (<div id="dropdownRadioHelper" className="z-10  bg-white divide-y divide-gray-100 rounded-lg shadow w-60 dark:bg-gray-700 dark:divide-gray-600">
         <ul className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioHelperButton">
-          <li>
-            <div className="flex p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-              <div className="flex items-center h-5">
-                  <input id="helper-radio-4" name="helper-radio" type="radio" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                    </input>
+          
+          {arCuConversatii.map((obiect, index)=>{
+            return <li onClick={()=>getMesFromDB(obiect.id_conversatie)} key={index} >
+              <div className="flex p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                <div className="ms-2 text-sm">
+                    <label  className="font-medium text-gray-900 dark:text-gray-300">
+                      <div>{obiect.mesaj}</div>
+                    </label>
+                </div>
+                
               </div>
-              <div className="ms-2 text-sm">
-                  <label  className="font-medium text-gray-900 dark:text-gray-300">
-                    <div>Individual</div>
-                    <p id="helper-radio-text-4" className="text-xs font-normal text-gray-500 dark:text-gray-300">Some helpful instruction goes over here.</p>
-                  </label>
-              </div>
-            </div>
-          </li>
-          <li>
-            <div className="flex p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-              <div className="flex items-center h-5">
-                  <input id="helper-radio-5" name="helper-radio" type="radio" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                  </input>
-              </div>
-              <div className="ms-2 text-sm">
-                  <label className="font-medium text-gray-900 dark:text-gray-300">
-                    <div>Company</div>
-                    <p id="helper-radio-text-5" className="text-xs font-normal text-gray-500 dark:text-gray-300">Some helpful instruction goes over here.</p>
-                  </label>
-              </div>
-            </div>
-          </li>
+            </li>
+          })}
         </ul>
       </div>)}
 

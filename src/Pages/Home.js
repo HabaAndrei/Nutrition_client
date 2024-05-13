@@ -14,6 +14,18 @@ const Home = () => {
   const [user, setUser] = React.useContext(ContextUser);
   const [scrisInTextarea, setScrisInTextarea] = useState('')
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
+  const [ar_mes_stream, setAr_Mes_Stream] = useState([]);
+
+  useEffect(()=>{
+    if(!ar_mes_stream.length)return;
+    setArrayCuMesaje((prev)=>{
+      prev[prev.length - 1].mesaj = [...ar_mes_stream].join('');
+      return [...prev];
+    })
+    console.log([...ar_mes_stream].join(''));
+  }, [ar_mes_stream])
+
+
 
   function neConectamCuGoogle(){
     signInWithPopup(auth, provider)
@@ -34,18 +46,10 @@ const Home = () => {
         const errorMessage = error.message;
         
     });
-}
+  }
 
-  useEffect(()=>{
-    if(user){
-      // console.log(user);
-    }else{
-      // console.log(user, 'nu e utilizatorul');
-    }
-  }, [user])
 
   function trimiteMesaj(){
-    if(!scrisInTextarea.length)return;
     try{
       axios.get("https://api.ipify.org/?format=json").then((data)=>{
         const adresa = data.data.ip;
@@ -64,7 +68,7 @@ const Home = () => {
                 'Content-Type': 'application/json',
                 "responseType": "stream"
               },
-              body: JSON.stringify({ context: [...arrayCuMesaje, { tip_mesaj: 'intrebare', mesaj: scrisInTextarea }] })
+              body: JSON.stringify({ context: [...arrayCuMesaje?.slice(-4), { tip_mesaj: 'intrebare', mesaj: scrisInTextarea }] })
             })
             .then((response)=>{
 
@@ -76,19 +80,23 @@ const Home = () => {
               function readStream(){
                 reader.read().then(({done, value})=>{
                   if(done){
-                    console.log('este gata maiii')
+                    // console.log('este gata maiii')
+                    setAr_Mes_Stream([]);
                   }else{
+                    
                     let cuv =  decoder.decode(value, {stream: true});
-                    setArrayCuMesaje((obiecte)=>{
-                      obiecte[obiecte.length - 1].mesaj += cuv;
-                      return [...obiecte];
-                    })
+                    
+                    setAr_Mes_Stream(prev => [...prev, cuv]);
+
                     readStream();
                   }
                 });
               }
 
               readStream();
+
+              // console.log(ok);
+              console.log('--- se executa fetchul!!!!');
 
             })
           }
@@ -98,6 +106,9 @@ const Home = () => {
       console.log(err);
     }
   }
+
+  
+
   
 
   return (

@@ -2,16 +2,16 @@ import React from 'react'
 import { LuSend } from "react-icons/lu";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import {creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
+import {punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
 import {ContextUser} from '../App.js';
 
 
 const Rap = (props) => {
 
   const [user, setUser] = React.useContext(ContextUser);
-
   const [textInInput, setTextInInput] = useState('');
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
+  const [arCuConversatii, setCuConversatii] = useState([]);
 
   function luamConversatiaDupaId(id_conversatie){
     axios.post(`${adresaServer}/getConvWithId`, {id_conversatie}).then((data)=>{
@@ -69,8 +69,6 @@ const Rap = (props) => {
       console.log(data, 'asta vine din py server')
 
       /////
-
-
       
       stocamMesajeleInDB(intrebare, data);
       setArrayCuMesaje((obiecte)=>{
@@ -85,41 +83,42 @@ const Rap = (props) => {
   }, [arrayCuMesaje])
 
 
+  function getConvFromDB(conversatie, uid){
+    axios.post(`${adresaServer}/getConvFromDB` , {conversatie, uid}).then((data)=>{
+      setCuConversatii(data.data);
+    })
+  }
+
+  useEffect(()=>{
+    if(props.isModalRapOpen){getConvFromDB('rap', user.uid);};
+  }, [props.isModalRapOpen])
+
+  function getMesFromDB(id_conversatie){
+    axios.post(`${adresaServer}/getMesFromDB`, {id_conversatie}).then((data)=>{
+      setArrayCuMesaje(data.data);
+      punemAltIdInUrl('rap', id_conversatie);
+    })
+  }
+
   return (
     <div className='fullPage-second' >
 
 
       {props.isModalRapOpen &&
+
       (<div id="dropdownRadioHelper" className="z-10  bg-white divide-y divide-gray-100 rounded-lg shadow w-60 dark:bg-gray-700 dark:divide-gray-600">
         <ul className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioHelperButton">
-        <li>
-          <div className="flex p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-            <div className="flex items-center h-5">
-                <input id="helper-radio-4" name="helper-radio" type="radio" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                  </input>
-            </div>
-            <div className="ms-2 text-sm">
-                <label  className="font-medium text-gray-900 dark:text-gray-300">
-                  <div>Individual</div>
-                  <p id="helper-radio-text-4" className="text-xs font-normal text-gray-500 dark:text-gray-300">Some helpful instruction goes over here.</p>
-                </label>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div className="flex p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-            <div className="flex items-center h-5">
-                <input id="helper-radio-5" name="helper-radio" type="radio" value="" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                </input>
-            </div>
-            <div className="ms-2 text-sm">
-                <label className="font-medium text-gray-900 dark:text-gray-300">
-                  <div>Company</div>
-                  <p id="helper-radio-text-5" className="text-xs font-normal text-gray-500 dark:text-gray-300">Some helpful instruction goes over here.</p>
-                </label>
-            </div>
-          </div>
-        </li>
+          {arCuConversatii.map((obiect, index)=>{
+            return <li onClick={()=>getMesFromDB(obiect.id_conversatie)} key={index} >
+              <div className="flex p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                <div className="ms-2 text-sm">
+                    <label  className="font-medium text-gray-900 dark:text-gray-300">
+                      <div>{obiect.mesaj}</div>
+                    </label>
+                </div>
+              </div>
+            </li>
+          })}
         </ul>
       </div>)}
 

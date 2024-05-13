@@ -78,6 +78,14 @@ function creamIdConversatie(id_name){
     return id;
 }
 
+function punemAltIdInUrl(conversatie, id){
+    // stergemParamDinUrl(conversatie);
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set(conversatie, id);
+    window.history.pushState(null, '', `${window.location.pathname}?${urlParams}`);  
+    return id;
+}
+
 function stergemParamDinUrl(param){
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.delete(param);
@@ -90,4 +98,4 @@ function luamIdDinUrl(param){
 }
 // <<<<====== parametru url
 
-export {creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
+export {punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
