@@ -30,12 +30,9 @@ code {
 
 
 .divConversatie {
-  /* flex-direction: column;  */
-  /* display: flex; */
   padding-left: 20%;
   padding-right: 20%;
   max-height: 250px; 
-  /* overflow-y: auto; */
   overflow-y: scroll;
 }
 
@@ -74,7 +71,7 @@ code {
 }
 
 .divDouaChaturi{
-  flex-grow: 1; /* Crește pentru a ocupa spațiul disponibil */
+  flex-grow: 1; 
   display: flex;
   
   width: 100%;
@@ -108,3 +105,60 @@ code {
 .mes_part::-webkit-scrollbar {
   display: none; 
 }
+
+.cursor_pointer{
+  cursor: pointer;
+}
+
+.max_length{
+  max-height: 250px;
+  overflow-y: scroll;
+}
+.max_length::-webkit-scrollbar {
+  display: none; 
+}
+
+/**/
+
+.setPage{
+  display: flex;
+  height: 100%;
+  flex-direction: row;
+}
+
+.setPageNav{
+  width: 20%;
+  min-width: 120px;
+  padding: 10px;
+}
+
+.setPageConv{
+  flex-grow: 1;
+}
+
+.butonInchisDeschis{
+  position: absolute;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.alertPage{
+  position: absolute;
+  left: 50%; 
+  transform: translateX(-50%);
+  padding-top: 60px;
+  z-index: 999;
+}
+
+.red{
+  color: red;
+}
+.blue{
+  color: blue;
+}
+.green{
+  color: green;
+}
+.yellow{
+  color: yellow;
+} 

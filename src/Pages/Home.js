@@ -1,17 +1,17 @@
 import React from 'react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { stergemUtilizatorul, adresaServer_ai, adresaServer, provider, auth, milisecGreenwich, neDeconectam } from '../diverse';
-import { signInWithPopup } from "firebase/auth";
-import {ContextUser} from '../App.js';
+import { neConectamCuGoogle, stergemUtilizatorul, adresaServer_ai, adresaServer, neDeconectam, deruleazaInJos } from '../diverse';
+import {ContextUser, ContextAlert} from '../App.js';
 import { useNavigate } from "react-router-dom";
 
 
 
 
-const Home = () => {
+const Home = (props) => {
   const navigate = useNavigate();
   const [user, setUser] = React.useContext(ContextUser);
+  const [arWithAlerts, setArWithAlerts] = React.useContext(ContextAlert);
   const [scrisInTextarea, setScrisInTextarea] = useState('')
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
   const [ar_mes_stream, setAr_Mes_Stream] = useState([]);
@@ -22,86 +22,58 @@ const Home = () => {
       prev[prev.length - 1].mesaj = [...ar_mes_stream].join('');
       return [...prev];
     })
-    console.log([...ar_mes_stream].join(''));
   }, [ar_mes_stream])
 
-
-
-  function neConectamCuGoogle(){
-    signInWithPopup(auth, provider)
-    .then((result) => {
-        const user = result.user;
-        const milisec = milisecGreenwich();
-        try{
-          axios.post(`${adresaServer}/insertDateU_google`, {
-            uid: user.uid, email:user.email, name: user.displayName, milisec,  metoda_creare: 'google'
-            }).then((data)=>{
-            // console.log(data);
-          })
-        }catch (err){
-          console.log(err);
-        }
-    }).catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        
-    });
-  }
+  useEffect(()=>{
+    deruleazaInJos('scrollJos_trei');
+  }, [arrayCuMesaje])
 
 
   function trimiteMesaj(){
     try{
-      axios.get("https://api.ipify.org/?format=json").then((data)=>{
-        const adresa = data.data.ip;
-
-
-        axios.post(`${adresaServer}/verificamCrediteGratis`, {ip_address: adresa}).then((data)=>{
+      axios.post(`${adresaServer}/verificamCrediteGratis`).then((data)=>{
+        
+        if(data.data[0].result >  3 /*  =>> sa mut aici 3 */){
+          props.addNewAlert({id: '1', culoare: 'yellow', mesaj: 'Unfortunately, you have already used your free messages, log in to continue using the application.'});
+        }else{
           
-          if(data.data[0].result >  5 /*  =>> sa mut aici 3 */){
-            console.log('ai folosit deja prea multe mesaje gratis')
-          }else{
+          setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: scrisInTextarea}, {tip_mesaj: 'raspuns', mesaj: ''}])
+          fetch(`${adresaServer_ai}/send_mes`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              "responseType": "stream"
+            },
+            body: JSON.stringify({ context: [...arrayCuMesaje?.slice(-4), { tip_mesaj: 'intrebare', mesaj: scrisInTextarea }] })
+          })
+          .then((response)=>{
+
+            setScrisInTextarea('');
+
+            let reader = response.body.getReader();
+            const decoder = new TextDecoder();
             
-            setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: scrisInTextarea}, {tip_mesaj: 'raspuns', mesaj: ''}])
-            fetch(`${adresaServer_ai}/send_mes`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                "responseType": "stream"
-              },
-              body: JSON.stringify({ context: [...arrayCuMesaje?.slice(-4), { tip_mesaj: 'intrebare', mesaj: scrisInTextarea }] })
-            })
-            .then((response)=>{
+            function readStream(){
+              reader.read().then(({done, value})=>{
+                if(done){
+                  // console.log('este gata maiii')
+                  setAr_Mes_Stream([]);
+                }else{
+                  
+                  let cuv =  decoder.decode(value, {stream: true});
+                  
+                  setAr_Mes_Stream(prev => [...prev, cuv]);
 
-              setScrisInTextarea('');
+                  readStream();
+                }
+              });
+            }
 
-              let reader = response.body.getReader();
-              const decoder = new TextDecoder();
-              
-              function readStream(){
-                reader.read().then(({done, value})=>{
-                  if(done){
-                    // console.log('este gata maiii')
-                    setAr_Mes_Stream([]);
-                  }else{
-                    
-                    let cuv =  decoder.decode(value, {stream: true});
-                    
-                    setAr_Mes_Stream(prev => [...prev, cuv]);
-
-                    readStream();
-                  }
-                });
-              }
-
-              readStream();
-
-              // console.log(ok);
-              console.log('--- se executa fetchul!!!!');
-
-            })
-          }
-        })
+            readStream();
+          })
+        }
       })
+     
     }catch (err){
       console.log(err);
     }
@@ -109,13 +81,8 @@ const Home = () => {
 
   
 
-  
-
   return (
     <div  className='background' >
-
-      
-      {/* divul de sus */}
 
 
       <div className='divSus' >
@@ -168,7 +135,7 @@ const Home = () => {
       </div>
 
       {/* divul cu conversatia */}
-      <div className='divConversatie'  >
+      <div className='divConversatie'  id='scrollJos_trei'>
 
         <div>
 

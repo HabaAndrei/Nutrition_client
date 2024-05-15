@@ -5,6 +5,8 @@ import SplitPane, { Pane } from 'split-pane-react';
 import 'split-pane-react/esm/themes/default.css';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+import { IoSettingsOutline } from "react-icons/io5";
 
 
 
@@ -16,12 +18,7 @@ const Chat_page = () => {
   const [isModalRapOpen, setIsModalRapOpen] = useState(false);
 
 
-  const layoutCSS = {
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  };
+  
 
 
 
@@ -31,27 +28,30 @@ const Chat_page = () => {
  
       <div className='navbarChat' >
         <nav className="bg-gray-50 dark:bg-gray-700">
-          <div className="max-w-screen-xl px-4 py-3 mx-auto">
+          <div className="max-w-screen-xl px-4 py-3 mx-auto  "  >
             <div className="flex items-center">
-              <ul className="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
+              <ul  className="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
                 <li>
                   <button onClick={()=>navigate('/')}  className="text-gray-900 dark:text-white hover:underline" aria-current="page">Home</button>
                 </li>
                 <li>
-                  <button onClick={()=>navigate('/settings')}  className="text-gray-900 dark:text-white hover:underline">Settings</button>
-                </li>
-                <li>
-                  <button
-                    onClick={()=>{setIsModalConvOpen(!isModalConvOpen)}}
-                    id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" className="text-gray-900 dark:text-white hover:underline" >
-                    Conversatii
+                  <button style={{ display: 'flex', alignItems: 'center' }}
+                  onClick={()=>navigate('/settings')}  className="text-gray-900 dark:text-white hover:underline">
+                    Settings  <IoSettingsOutline/>
                   </button>
                 </li>
-                <li>
-                  <button
+                <li >
+                  <button style={{ display: 'flex', alignItems: 'center' }}
+                    onClick={()=>{setIsModalConvOpen(!isModalConvOpen)}}
+                    id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" className="text-gray-900 dark:text-white hover:underline" >
+                    Conversatii {isModalConvOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown/> }
+                  </button>
+                </li>
+                <li  >
+                  <button  style={{ display: 'flex', alignItems: 'center' }}
                     onClick={()=>{setIsModalRapOpen(!isModalRapOpen)}}
                     id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" className="text-gray-900 dark:text-white hover:underline" >
-                    Rapoarte
+                    Rapoarte  {isModalRapOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown/> }
                   </button>                
                 </li>
               </ul>
@@ -62,7 +62,6 @@ const Chat_page = () => {
       </div>
 
    
-      {/* className='divDouaChaturi' */}
 
       <div className='divDouaChaturi' >
         <SplitPane

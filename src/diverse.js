@@ -49,24 +49,37 @@ function stergemUtilizatorul(){
     try{
         deleteUser(user).then(() => {
             axios.post(`${adresaServer}/stergemUtilizatorul`, {uid: user.uid}).then((data)=>{
-                console.log(data);
+                // console.log(data);
             })
-        }).catch((error) => {
-            console.log(error);
-        });
+        })
     }catch(err){
         console.log(err);
     }
 }
 
+function neConectamCuGoogle(){
+    signInWithPopup(auth, provider)
+    .then((result) => {
+        const user = result.user;
+        const milisec = milisecGreenwich();
+        try{
+          axios.post(`${adresaServer}/insertDateU_google`, {
+            uid: user.uid, email:user.email, name: user.displayName, milisec,  metoda_creare: 'google'
+            }).then((data)=>{
+            // console.log(data);
+          })
+        }catch (err){
+          console.log(err);
+        }
+    }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+    });
+  }
+
 // <<<==== firebase
 
 
-function deruleazaInJos (id){
-    const element = document.getElementById(id);
-    element.scrollTop = element.scrollHeight;
-  
-  };
 // =>>> parametru url
 
 
@@ -98,4 +111,12 @@ function luamIdDinUrl(param){
 }
 // <<<<====== parametru url
 
-export {punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
+
+
+function deruleazaInJos (id){
+    const element = document.getElementById(id);
+    element.scrollTop = element.scrollHeight;
+  
+  };
+
+export {neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}

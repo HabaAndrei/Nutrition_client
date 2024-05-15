@@ -3,13 +3,16 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {ContextUser} from '../App.js';
 import {punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
+import { FaTrashAlt } from "react-icons/fa";
+import { IoChatbox } from "react-icons/io5";
+
 
 const Conv = (props) => {
 
   const [user, setUser] = React.useContext(ContextUser);
   const [textInInput, setTextInInput] = useState('');
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
-  const [arCuConversatii, setCuConversatii] = useState([]);
+  const [arCuConversatii, setArCuConversatii] = useState([]);
   const [ar_mes_stream, setAr_Mes_Stream] = useState([]);
 
   useEffect(()=>{
@@ -31,7 +34,7 @@ const Conv = (props) => {
       prev[prev.length - 1].mesaj = [...ar_mes_stream].join('');
       return [...prev];
     })
-    console.log([...ar_mes_stream].join(''));
+    // console.log([...ar_mes_stream].join(''));
   }, [ar_mes_stream])
 
   function luamConversatiaDupaId(id_conversatie){
@@ -40,13 +43,14 @@ const Conv = (props) => {
     })
   }
 
-
+  function adaugConvInAr(id_conversatie, intrebare){
+    setArCuConversatii((prev)=>[...prev, {mesaj: intrebare.slice(0, 10), id_conversatie: id_conversatie}])
+  }
   
-
   function stocamMesajeleInDB(intrebare, raspuns){
-    let id_conversatie_din_url = luamIdDinUrl('conv');
-    if(!id_conversatie_din_url) id_conversatie_din_url = creamIdConversatie('conv');
-
+    let  id_conversatie_din_url = luamIdDinUrl('conv');
+    if(!id_conversatie_din_url){id_conversatie_din_url  = creamIdConversatie('conv'); 
+    adaugConvInAr(id_conversatie_din_url, intrebare)};
     try{
       axios.post(`${adresaServer}/stocamMesajele`, {
         arMes: [ {
@@ -104,7 +108,7 @@ const Conv = (props) => {
 
   function getConvFromDB(conversatie, uid){
     axios.post(`${adresaServer}/getConvFromDB` , {conversatie, uid}).then((data)=>{
-      setCuConversatii(data.data);
+      setArCuConversatii(data.data);
     })
   }
 
@@ -118,28 +122,49 @@ const Conv = (props) => {
     })
   }
 
+
+  function stergemConv(id_conversatie){
+    axios.post(`${adresaServer}/deleteConv`, {id_conversatie}).then((data)=>{
+      setArrayCuMesaje([]);
+      let indexConv = arCuConversatii.findIndex((ob)=>ob.id_conversatie === id_conversatie);
+      setArCuConversatii(arCuConversatii.slice(0 , indexConv).concat(arCuConversatii.slice(indexConv+1, arCuConversatii.length)));
+    })
+  }
+
+  function facemNewConv(){
+    setArrayCuMesaje([]);
+    stergemParamDinUrl('conv');
+  }
+
   return (
     <div className='fullPage-second' >
 
 
       {props.isModalConvOpen &&
 
-      (<div id="dropdownRadioHelper" className="z-10  bg-white divide-y divide-gray-100 rounded-lg shadow w-60 dark:bg-gray-700 dark:divide-gray-600">
-        <ul className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioHelperButton">
-          
+      (<div id="dropdownNotification" className="z-20  w-full max-w-sm bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-800 dark:divide-gray-700" aria-labelledby="dropdownNotificationButton">
+        <div className="block px-4 py-2 font-medium text-center text-gray-700 rounded-t-lg bg-gray-50 dark:bg-gray-800 dark:text-white">
+          Conversations
+        </div>
+
+        <div className=" max_length  divide-y divide-gray-100 dark:divide-gray-700">
           {arCuConversatii.map((obiect, index)=>{
-            return <li onClick={()=>getMesFromDB(obiect.id_conversatie)} key={index} >
-              <div className="flex p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                <div className="ms-2 text-sm">
-                    <label  className="font-medium text-gray-900 dark:text-gray-300">
-                      <div>{obiect.mesaj}</div>
-                    </label>
-                </div>
-                
+            return <a key={index} className="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700">
+              <div className="w-full ps-3">
+                  <div  onClick={()=>getMesFromDB(obiect.id_conversatie)} className="cursor_pointer  text-gray-500 text-sm mb-1.5 dark:text-gray-400"> {obiect.mesaj.slice(0, 10)} </div>
+                  <div  onClick={()=>{stergemConv(obiect.id_conversatie)}} style={{ display: 'flex', alignItems: 'center' }} className=" cursor_pointer text-xs text-blue-600 dark:text-blue-500">Delete <FaTrashAlt/></div>
               </div>
-            </li>
+            </a>
           })}
-        </ul>
+        </div>
+
+        <a className="block py-2 text-sm font-medium text-center text-gray-900 rounded-b-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white">
+          <div onClick={facemNewConv} className=" cursor_pointer  inline-flex items-center ">
+            <IoChatbox/>
+              New chat
+          </div>
+        </a>
+
       </div>)}
 
       <div className='mes_part' id='scrollJos_doi' >
