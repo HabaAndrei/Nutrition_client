@@ -67,7 +67,6 @@ const App = () => {
 export { App, ContextUser, ContextAlert}
 
 
-// fac modalul pe care sa il folosesc in fiecare pagina!!
 
 // fac o functie univeral pt a stoca mesajele din cov si rap, difereta intre ele este 
 //  =>> doar la un parametru conv si rap

@@ -6,6 +6,8 @@ import {punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, a
 import {ContextUser} from '../App.js';
 import { FaTrashAlt } from "react-icons/fa";
 import { IoChatbox } from "react-icons/io5";
+import Modal_delete from './Modal_delete.js';
+
 
 
 
@@ -15,6 +17,8 @@ const Rap = (props) => {
   const [textInInput, setTextInInput] = useState('');
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
   const [arCuConversatii, setArCuConversatii] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState({type: false});
+
   
   useEffect(()=>{
     const id_conversatie = luamIdDinUrl('rap')
@@ -110,10 +114,13 @@ const Rap = (props) => {
   }
 
   function stergemConv(id_conversatie){
+    console.log(id_conversatie);
+    
     axios.post(`${adresaServer}/deleteConv`, {id_conversatie}).then((data)=>{
       setArrayCuMesaje([]);
       let indexConv = arCuConversatii.findIndex((ob)=>ob.id_conversatie === id_conversatie);
       setArCuConversatii(arCuConversatii.slice(0 , indexConv).concat(arCuConversatii.slice(indexConv+1, arCuConversatii.length)));
+      setIsModalOpen({type: false});
     })
   }
 
@@ -125,6 +132,8 @@ const Rap = (props) => {
   return (
     <div className='fullPage-second' >
 
+      <Modal_delete  mes={'Are you sure you want to delete this?'} isModalOpen={isModalOpen} 
+      setIsModalOpen={setIsModalOpen} stergemConv={stergemConv} />
 
       {props.isModalRapOpen &&
 
@@ -138,7 +147,7 @@ const Rap = (props) => {
             return <a key={index} className="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700">
               <div className="w-full ps-3">
                   <div  onClick={()=>getMesFromDB(obiect.id_conversatie)} className="cursor_pointer  text-gray-500 text-sm mb-1.5 dark:text-gray-400"> {obiect.mesaj.slice(0, 10)} </div>
-                  <div  onClick={()=>{stergemConv(obiect.id_conversatie)}}  style={{ display: 'flex', alignItems: 'center' }} className=" cursor_pointer text-xs text-blue-600 dark:text-blue-500">Delete <FaTrashAlt/></div>
+                  <div  onClick={()=>{setIsModalOpen({type:true, id:obiect.id_conversatie})}}  style={{ display: 'flex', alignItems: 'center' }} className=" cursor_pointer text-xs text-blue-600 dark:text-blue-500">Delete <FaTrashAlt/></div>
               </div>
             </a>
           })}
