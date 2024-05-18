@@ -53,7 +53,7 @@ const App = () => {
           <Router>
 
             <Routes>
-              <Route path="settings" element={<Settings />} />
+              <Route path="settings" element={<Settings addNewAlert={addNewAlert} />} />
               <Route path="/" element={<Home  addNewAlert={addNewAlert} />} />
               <Route path="chatPage" element={<Chat_page />} />
             </Routes>

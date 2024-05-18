@@ -9,9 +9,9 @@ import { useNavigate } from "react-router-dom";
 
 
 const Home = (props) => {
+
   const navigate = useNavigate();
   const [user, setUser] = React.useContext(ContextUser);
-  const [arWithAlerts, setArWithAlerts] = React.useContext(ContextAlert);
   const [scrisInTextarea, setScrisInTextarea] = useState('')
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
   const [ar_mes_stream, setAr_Mes_Stream] = useState([]);
@@ -179,6 +179,11 @@ const Home = (props) => {
       <div>
         <p>Aici sa fac o parte de statistici cu top 100 grame proteina vitamina etc</p>
         
+
+        <div className='bg-gray-50 dark:bg-gray-700' >
+          <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+          <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 <a href="https://flowbite.com/" className="hover:underline">Flowbite™</a>. All Rights Reserved.</span>
+        </div>
       </div>
       
 
