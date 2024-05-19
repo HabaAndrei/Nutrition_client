@@ -4,6 +4,7 @@ import { FaRegArrowAltCircleRight, FaRegArrowAltCircleLeft } from "react-icons/f
 import { useNavigate } from "react-router-dom";
 import Test_component from '../Components/Test_component.js';
 import Pay_component from '../Components/Pay_component.js';
+import Profile from '../Components/Profile.js';
 import {putParamSetPage, luamIdDinUrl, stergemParamDinUrl} from '../diverse.js'
 
 const Settings = (props) => {
@@ -12,7 +13,7 @@ const Settings = (props) => {
   const navigate = useNavigate();
   const [componentRight, setComponentRight] = useState(1);
 
-  const obCuParams = {1 : 'pay', 2 :'test'};
+  const obCuParams = {1 : 'profile', 2 :'pay'};
   
   useEffect(()=>{
     const param = obCuParams[componentRight];
@@ -40,27 +41,21 @@ const Settings = (props) => {
         <div>
           <ul className="space-y space-y-4 text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0">
             <li>
-                <a  className="inline-flex items-center px-4 py-3 text-white bg-blue-700 rounded-lg active w-full dark:bg-blue-600" aria-current="page">
+                <button onClick={()=>setComponentRight(1)} className="inline-flex items-center px-4 py-3 text-white bg-blue-700 rounded-lg active w-full dark:bg-blue-600" aria-current="page">
                     <svg className="w-4 h-4 me-2 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
                     </svg>
                     Profile
-                </a>
+                </button>
             </li>
             <li>
-                <button onClick={()=>setComponentRight(1)} className="inline-flex items-center px-4 py-3 rounded-lg hover:text-gray-900 bg-gray-50 hover:bg-gray-100 w-full dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
+                <button onClick={()=>setComponentRight(2)} className="inline-flex items-center px-4 py-3 rounded-lg hover:text-gray-900 bg-gray-50 hover:bg-gray-100 w-full dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
                     Plata stripe!!!
                 </button>
             </li>
             <li>
                 <button onClick={()=>navigate('/chatPage')} className="inline-flex items-center px-4 py-3 rounded-lg hover:text-gray-900 bg-gray-50 hover:bg-gray-100 w-full dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
                   Chat_page
-                </button>
-            </li>
-            <li>
-                <button onClick={()=>setComponentRight(2)} className="inline-flex items-center px-4 py-3 rounded-lg hover:text-gray-900 bg-gray-50 hover:bg-gray-100 w-full dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
-                    
-                    Test
                 </button>
             </li>
             <li>
@@ -73,16 +68,20 @@ const Settings = (props) => {
       </div>}
 
 
+      <button  className='butonInchisDeschis' onClick={()=>setIsNavOpen(!isNavOpen)}  >        {isNavOpen ? <FaRegArrowAltCircleLeft/> : <FaRegArrowAltCircleRight/> }</button>
+      
       <div className='setPageCont' >
-        <button  className='butonInchisDeschis' onClick={()=>setIsNavOpen(!isNavOpen)}  >        {isNavOpen ? <FaRegArrowAltCircleLeft/> : <FaRegArrowAltCircleRight/> }</button>
+
+        {componentRight === 1 && 
+          <Profile/>
+        }
       
         {componentRight === 2 &&
-          <Test_component/>
-        }
-
-        {componentRight === 1 &&
           <Pay_component/>
         }
+
+        
+
       
       </div>
 

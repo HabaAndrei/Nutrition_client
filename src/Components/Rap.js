@@ -2,7 +2,7 @@ import React from 'react'
 import { LuSend } from "react-icons/lu";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import {punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
+import {returnArStr, returnNutrients, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
 import {ContextUser} from '../App.js';
 import { FaTrashAlt } from "react-icons/fa";
 import { IoChatbox } from "react-icons/io5";
@@ -38,7 +38,15 @@ const Rap = (props) => {
 
   function luamConversatiaDupaId(id_conversatie){
     axios.post(`${adresaServer}/getConvWithId`, {id_conversatie}).then((data)=>{
-      setArrayCuMesaje(data.data);
+      let arNou = []
+      for(let ob of data.data){
+        if(ob['tip_mesaj'] === 'intrebare'){
+          arNou.push(ob);
+        }else{
+          arNou.push({tip_mesaj : 'raspuns', mesaj : JSON.parse(ob.mesaj)})
+        }
+      }
+      setArrayCuMesaje(arNou);
     })
   }
 
@@ -70,7 +78,7 @@ const Rap = (props) => {
 
   function trimiteMesaj(){
     const intrebare = textInInput;
-    setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: textInInput}, {tip_mesaj: 'raspuns', mesaj: ''}])
+    setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: textInInput}, {tip_mesaj: 'raspuns', mesaj: []}])
     fetch(`${adresaServer_ai}/analyze_recipe`, {
       method: 'POST',
       headers: {
@@ -80,19 +88,17 @@ const Rap = (props) => {
       body: JSON.stringify({recipe: textInInput})
     })
     .then((response)=>{
-      return response.text()
+      return response.json()
     }).then((data)=>{
-      // setTextInInput('');
+      setTextInInput('');
 
       /////
-
-      console.log(data, 'asta vine din py server')
-
+      const nutrients = returnNutrients(data);
+      const ar_strFin = returnArStr(nutrients);
       /////
-      
-      stocamMesajeleInDB(intrebare, data);
+      stocamMesajeleInDB(intrebare, JSON.stringify(ar_strFin));
       setArrayCuMesaje((obiecte)=>{
-        obiecte[obiecte.length - 1].mesaj += data;
+        obiecte[obiecte.length - 1].mesaj = ar_strFin;
         return [...obiecte];
       })
     })
@@ -114,7 +120,6 @@ const Rap = (props) => {
   }
 
   function stergemConv(id_conversatie){
-    console.log(id_conversatie);
     
     axios.post(`${adresaServer}/deleteConv`, {id_conversatie}).then((data)=>{
       setArrayCuMesaje([]);
@@ -176,7 +181,11 @@ const Rap = (props) => {
           }else{
             return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
               <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>   
+                <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+                  {obiect.mesaj?.map((nutrient, index)=>{
+                    return <li key={index} > {nutrient}</li>
+                  })}                   
+                </ul>
               </div>
             </div>
           } 

@@ -123,6 +123,54 @@ function deruleazaInJos (id){
     const element = document.getElementById(id);
     element.scrollTop = element.scrollHeight;
   
-  };
+};
 
-export {putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
+///// =>>>>>>>> editare data din raport nutrienti 
+function returnValNum(catitate, valPerSuta){
+    return (catitate / 100) * valPerSuta;
+}
+
+function returnNutrients(arrayCuAlimente){
+    const arDeSarit = ['food_name', 'id'];
+    const obCuValorileTotale = {};
+
+    for(let aliment of arrayCuAlimente){
+        let quantity = aliment.quantity;
+        if(isNaN(quantity))quantity = 1;
+        for(let ob_nutrient of aliment.nutrients){
+
+            let numeNutrient = Object.keys(ob_nutrient)[0]
+            if(arDeSarit.includes(numeNutrient))continue;
+            let str_num_and_valCant = Object.values(ob_nutrient)[0];
+            const ar_nr_cant = str_num_and_valCant.split(' ');
+            
+            let numarPerSuta = Number(ar_nr_cant[0]);
+            if (isNaN(numarPerSuta))numarPerSuta = 0;
+            const cantitateaFinala = returnValNum(quantity, numarPerSuta)
+            if(obCuValorileTotale[numeNutrient]?.['unitate_de_masura']){
+                obCuValorileTotale[numeNutrient]['cantitate'] += cantitateaFinala;
+            }else{
+                obCuValorileTotale[numeNutrient] = {};
+                obCuValorileTotale[numeNutrient]['unitate_de_masura'] = ar_nr_cant[1];
+                obCuValorileTotale[numeNutrient]['cantitate'] = cantitateaFinala;
+            }
+
+        }
+    }
+    return (obCuValorileTotale)
+}
+
+function returnArStr(ob_de_ob){
+    // console.log(ob_de_ob);
+
+    let ar_str_fin = [];
+    for(let cheie of Object.keys(ob_de_ob)){
+        const numeNutrient = (cheie[0].toUpperCase() + cheie.slice(1, cheie.length)).replace(/_/g, ' ');
+        let valoare = JSON.stringify(ob_de_ob[cheie]['cantitate']).slice(0, 5) + ' ' +ob_de_ob[cheie]['unitate_de_masura']
+        ar_str_fin.push(numeNutrient + ' ' + valoare);
+    }
+    return ar_str_fin;
+}
+//// <<<<<<<<<=============
+
+export {returnArStr, returnNutrients, putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}

@@ -36,7 +36,7 @@ const Chat_page = () => {
                 </li>
                 <li>
                   <button style={{ display: 'flex', alignItems: 'center' }}
-                  onClick={()=>navigate('/settings?comp=pay')}  className="text-gray-900 dark:text-white hover:underline">
+                  onClick={()=>navigate('/settings?comp=profile')}  className="text-gray-900 dark:text-white hover:underline">
                     Settings  <IoSettingsOutline/>
                   </button>
                 </li>
