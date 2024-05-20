@@ -2,6 +2,8 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut,  onAuthStateChanged, deleteUser } from "firebase/auth";
 import axios from 'axios';
 import uuid from 'react-uuid';
+import { styled } from "@mui/system";
+
 
 
 const adresaServer = 'http://localhost:5000';
@@ -134,9 +136,15 @@ function returnNutrients(arrayCuAlimente){
     const arDeSarit = ['food_name', 'id'];
     const obCuValorileTotale = {};
 
+    console.log(arrayCuAlimente);
+
     for(let aliment of arrayCuAlimente){
         let quantity = aliment.quantity;
-        if(isNaN(quantity))quantity = 1;
+        // console.log(quantity, '----')
+        const numarDeCantitate = quantity.split(' ')[0];
+        // console.log(numarDeCantitate, 'numar de cantitate nou');
+        if(isNaN(numarDeCantitate))quantity = 1;
+
         for(let ob_nutrient of aliment.nutrients){
 
             let numeNutrient = Object.keys(ob_nutrient)[0]
@@ -146,7 +154,11 @@ function returnNutrients(arrayCuAlimente){
             
             let numarPerSuta = Number(ar_nr_cant[0]);
             if (isNaN(numarPerSuta))numarPerSuta = 0;
-            const cantitateaFinala = returnValNum(quantity, numarPerSuta)
+            const cantitateaFinala = returnValNum(numarDeCantitate, numarPerSuta);
+            if(numeNutrient === 'protein'){
+                console.log({cantitateaFinala, numarDeCantitate, numarPerSuta} )
+
+            }
             if(obCuValorileTotale[numeNutrient]?.['unitate_de_masura']){
                 obCuValorileTotale[numeNutrient]['cantitate'] += cantitateaFinala;
             }else{
@@ -173,4 +185,17 @@ function returnArStr(ob_de_ob){
 }
 //// <<<<<<<<<=============
 
-export {returnArStr, returnNutrients, putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
+const VisuallyHiddenInput = styled("input")`
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  white-space: nowrap;
+  width: 1px;
+`;
+
+
+export {VisuallyHiddenInput, returnArStr, returnNutrients, putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}

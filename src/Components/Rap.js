@@ -7,6 +7,7 @@ import {ContextUser} from '../App.js';
 import { FaTrashAlt } from "react-icons/fa";
 import { IoChatbox } from "react-icons/io5";
 import Modal_delete from './Modal_delete.js';
+import { IoMdCloseCircle } from "react-icons/io";
 
 
 
@@ -144,7 +145,7 @@ const Rap = (props) => {
 
         (<div id="dropdownNotification" className="z-20  w-full max-w-sm bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-800 dark:divide-gray-700" aria-labelledby="dropdownNotificationButton">
         <div className="block px-4 py-2 font-medium text-center text-gray-700 rounded-t-lg bg-gray-50 dark:bg-gray-800 dark:text-white">
-          Reports
+          <IoMdCloseCircle onClick={()=>props.setIsModalRapOpen(false)} style={{cursor: 'pointer'}} /> Reports
         </div>
 
         <div className="  max_length divide-y divide-gray-100 dark:divide-gray-700">

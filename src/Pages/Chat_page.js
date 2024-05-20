@@ -72,12 +72,12 @@ const Chat_page = () => {
           
           <Pane minSize={5} maxSize='95%'>
             <div className='divStanga'>
-              <Conv isModalConvOpen={isModalConvOpen}  />
+              <Conv isModalConvOpen={isModalConvOpen} setIsModalConvOpen={setIsModalConvOpen} />
             </div>
           </Pane>
           <Pane minSize={5} maxSize='95%'>
             <div className='divDreapta'>
-              <Rap isModalRapOpen={isModalRapOpen}  />
+              <Rap isModalRapOpen={isModalRapOpen} setIsModalRapOpen={setIsModalRapOpen} />
             </div>
           </Pane>
 
