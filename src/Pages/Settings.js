@@ -55,7 +55,7 @@ const Settings = (props) => {
             </li>
             <li>
                 <button onClick={()=>navigate('/chatPage')} className="inline-flex items-center px-4 py-3 rounded-lg hover:text-gray-900 bg-gray-50 hover:bg-gray-100 w-full dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
-                  Chat_page
+                  Chat page
                 </button>
             </li>
             <li>
@@ -73,11 +73,11 @@ const Settings = (props) => {
       <div className='setPageCont' >
 
         {componentRight === 1 && 
-          <Profile/>
+          <Profile   addNewAlert={props.addNewAlert}  />
         }
       
         {componentRight === 2 &&
-          <Pay_component/>
+          <Pay_component  addNewAlert={props.addNewAlert} />
         }
 
         

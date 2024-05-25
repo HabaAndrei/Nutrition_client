@@ -9,6 +9,7 @@ import { styled } from "@mui/system";
 const adresaServer = 'http://localhost:5000';
 const adresaServer_ai = 'http://localhost:4000';
 
+
 function milisecGreenwich() {
     let  date = new Date(); 
     let utc = date.getTime() + (date.getTimezoneOffset() * 60000); 
@@ -47,16 +48,15 @@ function neDeconectam(){
 
 function stergemUtilizatorul(){
     const user = auth.currentUser;
-   
-    try{
-        deleteUser(user).then(() => {
-            axios.post(`${adresaServer}/stergemUtilizatorul`, {uid: user.uid}).then((data)=>{
-                // console.log(data);
-            })
+    console.log(user, '------------')
+    deleteUser(user).then(() => {
+        console.log('a intrat sa execute si asat !!!======')
+        axios.post(`${adresaServer}/stergemUtilizatorul`, {uid: user.uid}).then((data)=>{
+            console.log(data);
         })
-    }catch(err){
-        console.log(err);
-    }
+    }).catch((error) => {
+        console.log(error, '----------aceasta este eroarea de care dam')
+    });
 }
 
 function neConectamCuGoogle(){
@@ -121,7 +121,7 @@ function putParamSetPage(param){
 
 
 
-function deruleazaInJos (id){
+function deruleazaInJos(id){
     const element = document.getElementById(id);
     element.scrollTop = element.scrollHeight;
   
@@ -129,6 +129,9 @@ function deruleazaInJos (id){
 
 ///// =>>>>>>>> editare data din raport nutrienti 
 function returnValNum(catitate, valPerSuta){
+
+
+
     return (catitate / 100) * valPerSuta;
 }
 
@@ -136,13 +139,21 @@ function returnNutrients(arrayCuAlimente){
     const arDeSarit = ['food_name', 'id'];
     const obCuValorileTotale = {};
 
-    console.log(arrayCuAlimente);
-
     for(let aliment of arrayCuAlimente){
         let quantity = aliment.quantity;
-        // console.log(quantity, '----')
         const numarDeCantitate = quantity.split(' ')[0];
-        // console.log(numarDeCantitate, 'numar de cantitate nou');
+        /////////////////////////////
+        console.log(quantity, '----');
+        console.log(numarDeCantitate, 'cantiattea => si pe asta sa o adaug in raport =<<<<<<<');
+        console.log(aliment);
+        if(obCuValorileTotale['total_food_value']?.['cantitate']){
+            obCuValorileTotale['total_food_value']['cantitate'] += Number(numarDeCantitate);
+        }else{
+            obCuValorileTotale['total_food_value'] = {};
+            obCuValorileTotale['total_food_value']['cantitate'] = Number(numarDeCantitate);
+            obCuValorileTotale['total_food_value']['unitate_de_masura'] = 'g'
+        }
+        /////////////////////////////
         if(isNaN(numarDeCantitate))quantity = 1;
 
         for(let ob_nutrient of aliment.nutrients){
@@ -155,10 +166,10 @@ function returnNutrients(arrayCuAlimente){
             let numarPerSuta = Number(ar_nr_cant[0]);
             if (isNaN(numarPerSuta))numarPerSuta = 0;
             const cantitateaFinala = returnValNum(numarDeCantitate, numarPerSuta);
-            if(numeNutrient === 'protein'){
-                console.log({cantitateaFinala, numarDeCantitate, numarPerSuta} )
+            // if(numeNutrient === 'protein'){
+            //     console.log({cantitateaFinala, numarDeCantitate, numarPerSuta} )
 
-            }
+            // }
             if(obCuValorileTotale[numeNutrient]?.['unitate_de_masura']){
                 obCuValorileTotale[numeNutrient]['cantitate'] += cantitateaFinala;
             }else{
@@ -169,6 +180,7 @@ function returnNutrients(arrayCuAlimente){
 
         }
     }
+    console.log(obCuValorileTotale);
     return (obCuValorileTotale)
 }
 
@@ -183,7 +195,9 @@ function returnArStr(ob_de_ob){
     }
     return ar_str_fin;
 }
-//// <<<<<<<<<=============
+//// <<<<<<<<<=============  editare date raport nutrienti
+
+
 
 const VisuallyHiddenInput = styled("input")`
   clip: rect(0 0 0 0);
@@ -198,4 +212,22 @@ const VisuallyHiddenInput = styled("input")`
 `;
 
 
-export {VisuallyHiddenInput, returnArStr, returnNutrients, putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
+
+// function stocamMesajeleInDB(intrebare, raspuns, id_conversatie, uid, conv){
+//     try{
+//         axios.post(`${adresaServer}/stocamMesajele`, {
+//           arMes: [ {
+//             tip_mesaj: 'intrebare', mesaj: intrebare, 
+//           }, {tip_mesaj: 'raspuns', mesaj: raspuns}], 
+//           id_conversatie: id_conversatie, data: milisecGreenwich(), uid: uid, conversatie: conv}
+//         ).then((data)=>{
+//             // console.log(data);
+//           }
+//         )
+//     }catch(err){
+//     console.log(err);
+//     }
+// }
+
+
+export { VisuallyHiddenInput, returnArStr, returnNutrients, putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}

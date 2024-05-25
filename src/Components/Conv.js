@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {ContextUser} from '../App.js';
-import {punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
+import { punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
 import { FaTrashAlt } from "react-icons/fa";
 import { IoChatbox } from "react-icons/io5";
 import Modal_delete from './Modal_delete.js';
@@ -38,7 +38,6 @@ const Conv = (props) => {
       prev[prev.length - 1].mesaj = [...ar_mes_stream].join('');
       return [...prev];
     })
-    // console.log([...ar_mes_stream].join(''));
   }, [ar_mes_stream])
 
   function luamConversatiaDupaId(id_conversatie){
@@ -50,6 +49,7 @@ const Conv = (props) => {
   function adaugConvInAr(id_conversatie, intrebare){
     setArCuConversatii((prev)=>[...prev, {mesaj: intrebare.slice(0, 10), id_conversatie: id_conversatie}])
   }
+
   
   function stocamMesajeleInDB(intrebare, raspuns){
     let  id_conversatie_din_url = luamIdDinUrl('conv');
@@ -83,7 +83,7 @@ const Conv = (props) => {
       body: JSON.stringify({ context: [...arrayCuMesaje?.slice(-4), { tip_mesaj: 'intrebare', mesaj: textInInput }] })
     })
     .then((response)=>{
-      let raspunsul_stream = ''
+      let raspunsul_stream = '';
       setTextInInput('');
 
       let reader = response.body.getReader();
@@ -93,6 +93,9 @@ const Conv = (props) => {
         reader.read().then(({done, value})=>{
           if(done){
             stocamMesajeleInDB(intrebare, raspunsul_stream);
+
+            setAr_Mes_Stream([]);
+
           }else{
             let cuv =  decoder.decode(value, {stream: true});
             raspunsul_stream += cuv;
@@ -118,13 +121,13 @@ const Conv = (props) => {
 
 
 
-  function getMesFromDB(id_conversatie){
-    axios.post(`${adresaServer}/getMesFromDB`, {id_conversatie}).then((data)=>{
-      setArrayCuMesaje(data.data);
-      punemAltIdInUrl('conv', id_conversatie);
+  // function getMesFromDB(id_conversatie){
+  //   axios.post(`${adresaServer}/getMesFromDB`, {id_conversatie}).then((data)=>{
+  //     setArrayCuMesaje(data.data);
+  //     punemAltIdInUrl('conv', id_conversatie);
 
-    })
-  }
+  //   })
+  // }
 
 
   function stergemConv(id_conversatie){    
@@ -132,13 +135,14 @@ const Conv = (props) => {
       setArrayCuMesaje([]);
       let indexConv = arCuConversatii.findIndex((ob)=>ob.id_conversatie === id_conversatie);
       setArCuConversatii(arCuConversatii.slice(0 , indexConv).concat(arCuConversatii.slice(indexConv+1, arCuConversatii.length)));
-      setIsModalOpen({type: false});
+      // setIsModalOpen({type: false});
     })
   }
 
   function facemNewConv(){
     setArrayCuMesaje([]);
     stergemParamDinUrl('conv');
+    setTextInInput('');
   }
 
 
@@ -146,7 +150,7 @@ const Conv = (props) => {
     <div className='fullPage-second' >
 
       <Modal_delete  mes={'Are you sure you want to delete this?'} isModalOpen={isModalOpen} 
-      setIsModalOpen={setIsModalOpen} stergemConv={stergemConv} />
+      setIsModalOpen={setIsModalOpen} stergem={stergemConv} id={isModalOpen.id} />
 
 
       {props.isModalConvOpen &&
@@ -160,7 +164,7 @@ const Conv = (props) => {
           {arCuConversatii.map((obiect, index)=>{
             return <a key={index} className="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700">
               <div className="w-full ps-3">
-                  <div  onClick={()=>getMesFromDB(obiect.id_conversatie)} className="cursor_pointer  text-gray-500 text-sm mb-1.5 dark:text-gray-400"> {obiect.mesaj.slice(0, 10)} </div>
+                  <div  onClick={()=>luamConversatiaDupaId(obiect.id_conversatie)} className="cursor_pointer  text-gray-500 text-sm mb-1.5 dark:text-gray-400"> {obiect.mesaj.slice(0, 10)} </div>
                   <div  onClick={()=>{setIsModalOpen({type:true, id:obiect.id_conversatie})}} style={{ display: 'flex', alignItems: 'center' }} className=" cursor_pointer text-xs text-blue-600 dark:text-blue-500">Delete <FaTrashAlt/></div>
               </div>
             </a>

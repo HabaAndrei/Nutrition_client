@@ -6,6 +6,7 @@ import AlertPage from './Components/AlertPage.js';
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { adresaServer, auth, } from './diverse.js';
 import {onAuthStateChanged} from 'firebase/auth';
+import axios from 'axios';
 
 const ContextUser = React.createContext();
 const ContextAlert = React.createContext();
@@ -17,14 +18,20 @@ const App = () => {
   const [arWithAlerts, setArWithAlerts] = useState([]);
 
   useEffect(()=>{
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
+    onAuthStateChanged(auth, (userul) => {
+      if (userul) {
+        setUser(userul);
+        axios.post(`${adresaServer}/getDataUser`, {email: userul.email}).then((data)=>{
+          // console.log(data.data);
+          setUser(prev => ({...prev, abonamente: data.data}));
+        })
       } else {
         setUser(false);
       }
     });
   }, []);
+
+
 
   function addNewAlert(obiectDeAdugat){
 
@@ -66,6 +73,12 @@ const App = () => {
 
 export { App, ContextUser, ContextAlert}
 
+
+// fac cod pt a sterge din tokeni , mai ales ca trebuie sa ii si afisiez undeva pe ecran !!
+
+// daca abonamentul e sterg ok il sterg si din componenta user
+
+// vezi problema de la rap.js cand apas pe o conversatie
 
 
 // fac o functie univeral pt a stoca mesajele din cov si rap, difereta intre ele este 

@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { neConectamCuGoogle, stergemUtilizatorul, adresaServer_ai, adresaServer, neDeconectam, deruleazaInJos } from '../diverse';
-import {ContextUser, ContextAlert} from '../App.js';
+import {ContextUser} from '../App.js';
 import { useNavigate } from "react-router-dom";
 
 
@@ -33,7 +33,7 @@ const Home = (props) => {
     try{
       axios.post(`${adresaServer}/verificamCrediteGratis`).then((data)=>{
         
-        if(data.data[0].result >  3 /*  =>> sa mut aici 3 */){
+        if(data.data[0].result >  5 /*  =>> sa mut aici 3 */){
           props.addNewAlert({id: '1', culoare: 'yellow', mesaj: 'Unfortunately, you have already used your free messages, log in to continue using the application.'});
         }else{
           
@@ -56,7 +56,6 @@ const Home = (props) => {
             function readStream(){
               reader.read().then(({done, value})=>{
                 if(done){
-                  // console.log('este gata maiii')
                   setAr_Mes_Stream([]);
                 }else{
                   
@@ -120,12 +119,6 @@ const Home = (props) => {
                         </li>
                         <li>
                             <a className="text-gray-900 dark:text-white hover:underline">Company</a>
-                        </li>
-                        <li>
-                            <button onClick={stergemUtilizatorul} className="text-gray-900 dark:text-white hover:underline">Delete user</button>
-                        </li>
-                        <li>
-                            <button onClick={neDeconectam} className="text-gray-900 dark:text-white hover:underline">Deconecteaza te </button>
                         </li>
                     </ul>
                 </div>

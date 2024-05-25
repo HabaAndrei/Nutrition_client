@@ -15,6 +15,7 @@ import { IoMdCloseCircle } from "react-icons/io";
 const Rap = (props) => {
 
   const [user, setUser] = React.useContext(ContextUser);
+  
   const [textInInput, setTextInInput] = useState('');
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
   const [arCuConversatii, setArCuConversatii] = useState([]);
@@ -113,12 +114,12 @@ const Rap = (props) => {
   }
 
 
-  function getMesFromDB(id_conversatie){
-    axios.post(`${adresaServer}/getMesFromDB`, {id_conversatie}).then((data)=>{
-      setArrayCuMesaje(data.data);
-      punemAltIdInUrl('rap', id_conversatie);
-    })
-  }
+  // function getMesFromDB(id_conversatie){
+  //   axios.post(`${adresaServer}/getMesFromDB`, {id_conversatie}).then((data)=>{
+  //     setArrayCuMesaje(data.data);
+  //     punemAltIdInUrl('rap', id_conversatie);
+  //   })
+  // }
 
   function stergemConv(id_conversatie){
     
@@ -126,7 +127,7 @@ const Rap = (props) => {
       setArrayCuMesaje([]);
       let indexConv = arCuConversatii.findIndex((ob)=>ob.id_conversatie === id_conversatie);
       setArCuConversatii(arCuConversatii.slice(0 , indexConv).concat(arCuConversatii.slice(indexConv+1, arCuConversatii.length)));
-      setIsModalOpen({type: false});
+      // setIsModalOpen({type: false});
     })
   }
 
@@ -139,7 +140,7 @@ const Rap = (props) => {
     <div className='fullPage-second' >
 
       <Modal_delete  mes={'Are you sure you want to delete this?'} isModalOpen={isModalOpen} 
-      setIsModalOpen={setIsModalOpen} stergemConv={stergemConv} />
+      setIsModalOpen={setIsModalOpen} stergem={stergemConv} id={isModalOpen.id}  />
 
       {props.isModalRapOpen &&
 
@@ -152,7 +153,7 @@ const Rap = (props) => {
           {arCuConversatii.map((obiect, index)=>{
             return <a key={index} className="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700">
               <div className="w-full ps-3">
-                  <div  onClick={()=>getMesFromDB(obiect.id_conversatie)} className="cursor_pointer  text-gray-500 text-sm mb-1.5 dark:text-gray-400"> {obiect.mesaj.slice(0, 10)} </div>
+                  <div  onClick={()=>luamConversatiaDupaId(obiect.id_conversatie)} className="cursor_pointer  text-gray-500 text-sm mb-1.5 dark:text-gray-400"> {obiect.mesaj.slice(0, 10)} </div>
                   <div  onClick={()=>{setIsModalOpen({type:true, id:obiect.id_conversatie})}}  style={{ display: 'flex', alignItems: 'center' }} className=" cursor_pointer text-xs text-blue-600 dark:text-blue-500">Delete <FaTrashAlt/></div>
               </div>
             </a>
@@ -183,9 +184,9 @@ const Rap = (props) => {
             return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
               <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
                 <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-                  {obiect.mesaj?.map((nutrient, index)=>{
+                  {obiect.mesaj.length &&  obiect.mesaj.map((nutrient, index)=>{
                     return <li key={index} > {nutrient}</li>
-                  })}                   
+                  })  }                 
                 </ul>
               </div>
             </div>
