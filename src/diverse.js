@@ -180,7 +180,6 @@ function returnNutrients(arrayCuAlimente){
 
         }
     }
-    console.log(obCuValorileTotale);
     return (obCuValorileTotale)
 }
 

@@ -7,6 +7,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { IoChatbox } from "react-icons/io5";
 import Modal_delete from './Modal_delete.js';
 import { IoMdCloseCircle } from "react-icons/io";
+import Loading from './Loading.js';
 
 
 
@@ -18,6 +19,7 @@ const Conv = (props) => {
   const [arCuConversatii, setArCuConversatii] = useState([]);
   const [ar_mes_stream, setAr_Mes_Stream] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState({type: false});
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(()=>{
     const id_conversatie = luamIdDinUrl('conv')
@@ -43,6 +45,7 @@ const Conv = (props) => {
   function luamConversatiaDupaId(id_conversatie){
     axios.post(`${adresaServer}/getConvWithId`, {id_conversatie}).then((data)=>{
       setArrayCuMesaje(data.data);
+      punemAltIdInUrl('conv', id_conversatie);
     })
   }
 
@@ -71,9 +74,10 @@ const Conv = (props) => {
   }
 
   function trimitemMesajulAi(){
-
+    
     if(!textInInput.length)return;
     
+    setIsLoading(true);
     if(!verifyTokens()){
       props.addNewAlert({id: '8', culoare: 'red', mesaj: 'Unfortunately, you have no more tokens.'});
       return;
@@ -96,6 +100,7 @@ const Conv = (props) => {
       const decoder = new TextDecoder();
       
       function readStream(){
+        setIsLoading(false);
         reader.read().then(({done, value})=>{
           if(done){
             stocamMesajeleInDB(intrebare, raspunsul_stream);
@@ -219,10 +224,19 @@ const Conv = (props) => {
               </div>
             </div>
           }else{
+            
+            // return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
+            //   <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
+            //     <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>   
+            //   </div>
+            // </div>
             return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
-              <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>   
-              </div>
+              {index === arrayCuMesaje.length - 1 && isLoading ? 
+                <Loading/> : 
+                <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
+                  <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>   
+               </div>
+              }
             </div>
           } 
         })}

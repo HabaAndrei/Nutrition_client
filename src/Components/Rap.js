@@ -8,6 +8,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { IoChatbox } from "react-icons/io5";
 import Modal_delete from './Modal_delete.js';
 import { IoMdCloseCircle } from "react-icons/io";
+import Loading from './Loading.js';
 
 
 
@@ -20,6 +21,7 @@ const Rap = (props) => {
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
   const [arCuConversatii, setArCuConversatii] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState({type: false});
+  const [isLoading, setIsLoading] = useState(false);
 
   
   useEffect(()=>{
@@ -50,6 +52,8 @@ const Rap = (props) => {
         }
       }
       setArrayCuMesaje(arNou);
+      punemAltIdInUrl('rap', id_conversatie);
+
     })
   }
 
@@ -81,7 +85,9 @@ const Rap = (props) => {
 
   function trimiteMesaj(){
 
+
     if(!textInInput.length)return;
+    setIsLoading(true);
 
     if(!verifyTokens()){
       props.addNewAlert({id: '8', culoare: 'red', mesaj: 'Unfortunately, you have no more tokens.'});
@@ -102,6 +108,7 @@ const Rap = (props) => {
       return response.json()
     }).then((data)=>{
       setTextInInput('');
+      setIsLoading(false);
 
       /////
       const nutrients = returnNutrients(data);
@@ -223,11 +230,14 @@ const Rap = (props) => {
           }else{
             return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
               <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-                  {obiect.mesaj.length ? obiect.mesaj.map((nutrient, index)=>{
-                    return <li key={index} > {nutrient}</li>
-                  }) : <div></div> }                 
-                </ul>
+                {index === arrayCuMesaje.length - 1 && isLoading ? 
+                  <Loading/> : 
+                  <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+                    {obiect.mesaj.length ? obiect.mesaj.map((nutrient, index)=>{
+                      return <li key={index} > {nutrient}</li>
+                    }) : <div></div> }                 
+                  </ul>
+                }
               </div>
             </div>
           } 

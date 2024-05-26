@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { neConectamCuGoogle, stergemUtilizatorul, adresaServer_ai, adresaServer, neDeconectam, deruleazaInJos } from '../diverse';
 import {ContextUser} from '../App.js';
 import { useNavigate } from "react-router-dom";
+import Loading from '../Components/Loading.js';
 
 
 
@@ -15,6 +16,8 @@ const Home = (props) => {
   const [scrisInTextarea, setScrisInTextarea] = useState('')
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
   const [ar_mes_stream, setAr_Mes_Stream] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(()=>{
     if(!ar_mes_stream.length)return;
@@ -30,6 +33,11 @@ const Home = (props) => {
 
 
   function trimiteMesaj(){
+
+    if(!scrisInTextarea.length)return;
+
+    setIsLoading(true);
+
     try{
       axios.post(`${adresaServer}/verificamCrediteGratis`).then((data)=>{
         
@@ -49,11 +57,15 @@ const Home = (props) => {
           .then((response)=>{
 
             setScrisInTextarea('');
+            setIsLoading(false);
 
             let reader = response.body.getReader();
             const decoder = new TextDecoder();
             
             function readStream(){
+
+
+
               reader.read().then(({done, value})=>{
                 if(done){
                   setAr_Mes_Stream([]);
@@ -110,22 +122,24 @@ const Home = (props) => {
             </div>
           </div>
         </nav>
-        <nav className="bg-gray-50 dark:bg-gray-700">
-            <div className="max-w-screen-xl px-4 py-3 mx-auto">
-                <div className="flex items-center">
-                    <ul className="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm">
-                        <li>
-                            <a  className="text-gray-900 dark:text-white hover:underline" aria-current="page">Home</a>
-                        </li>
-                        <li>
-                            <a className="text-gray-900 dark:text-white hover:underline">Company</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        
 
       </div>
+
+
+      <div>
+        
+        <a className="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <img className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="../../poza_1.jpg" alt="" />
+            <div className="flex flex-col justify-between p-4 leading-normal">
+                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+            </div>
+        </a>
+
+      </div>
+
+
 
       {/* divul cu conversatia */}
       <div className='divConversatie'  id='scrollJos_trei'>
@@ -143,9 +157,12 @@ const Home = (props) => {
               </div>
             }else{
               return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
-                <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                  <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>   
-                </div>
+                {index === arrayCuMesaje.length - 1 && isLoading ? 
+                  <Loading/> : 
+                  <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
+                    <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>   
+                  </div>
+                }
               </div>
             } 
           })}
