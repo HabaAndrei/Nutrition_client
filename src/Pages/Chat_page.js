@@ -3,24 +3,33 @@ import Conv from '../Components/Conv.js';
 import Rap from '../Components/Rap.js';
 import SplitPane, { Pane } from 'split-pane-react';
 import 'split-pane-react/esm/themes/default.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { IoSettingsOutline } from "react-icons/io5";
+import {ContextUser} from '../App.js';
 
 
 
-const Chat_page = () => {
+
+const Chat_page = (props) => {
 
   const navigate = useNavigate();
+  const [user, setUser] = React.useContext(ContextUser);
   const [sizes, setSizes] = useState(['50%', '50%']);
   const [isModalConvOpen, setIsModalConvOpen] = useState(false);
   const [isModalRapOpen, setIsModalRapOpen] = useState(false);
+  const [tokeni, setTokeni] = useState();
 
-
-  
-
-
+  useEffect(()=>{
+    if(user?.abonamente?.length){
+      let sum = 0;
+      user.abonamente.forEach((obiect)=>{
+        sum += Number(obiect.numar_tokeni)
+      })
+      setTokeni(sum);
+    }
+  }, [user]);
 
 
   return (
@@ -54,6 +63,10 @@ const Chat_page = () => {
                     Rapoarte  {isModalRapOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown/> }
                   </button>                
                 </li>
+
+                <li  >
+                  <p>{tokeni} tokens</p>              
+                </li>
               </ul>
             </div>
           </div>
@@ -72,12 +85,12 @@ const Chat_page = () => {
           
           <Pane minSize={5} maxSize='95%'>
             <div className='divStanga'>
-              <Conv isModalConvOpen={isModalConvOpen} setIsModalConvOpen={setIsModalConvOpen} />
+              <Conv isModalConvOpen={isModalConvOpen} setIsModalConvOpen={setIsModalConvOpen}   addNewAlert={props.addNewAlert}  />
             </div>
           </Pane>
           <Pane minSize={5} maxSize='95%'>
             <div className='divDreapta'>
-              <Rap isModalRapOpen={isModalRapOpen} setIsModalRapOpen={setIsModalRapOpen} />
+              <Rap isModalRapOpen={isModalRapOpen} setIsModalRapOpen={setIsModalRapOpen} addNewAlert={props.addNewAlert} />
             </div>
           </Pane>
 

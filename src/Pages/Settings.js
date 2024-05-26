@@ -2,7 +2,6 @@ import React from 'react';
 import { useState, useEffect } from 'react'
 import { FaRegArrowAltCircleRight, FaRegArrowAltCircleLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Test_component from '../Components/Test_component.js';
 import Pay_component from '../Components/Pay_component.js';
 import Profile from '../Components/Profile.js';
 import {putParamSetPage, luamIdDinUrl, stergemParamDinUrl} from '../diverse.js'
@@ -34,9 +33,9 @@ const Settings = (props) => {
   }, [])
 
   return (
-    <div className='setPage' >
+    <div className='setPage'  >
 
-      {isNavOpen && <div className='setPageNav' >
+      {isNavOpen && <div className='setPageNav ' >
 
         <div>
           <ul className="space-y space-y-4 text-sm font-medium text-gray-500 dark:text-gray-400 md:me-4 mb-4 md:mb-0">
@@ -50,7 +49,7 @@ const Settings = (props) => {
             </li>
             <li>
                 <button onClick={()=>setComponentRight(2)} className="inline-flex items-center px-4 py-3 rounded-lg hover:text-gray-900 bg-gray-50 hover:bg-gray-100 w-full dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
-                    Plata stripe!!!
+                  Manage payments
                 </button>
             </li>
             <li>
@@ -58,11 +57,7 @@ const Settings = (props) => {
                   Chat page
                 </button>
             </li>
-            <li>
-                <a className="inline-flex items-center px-4 py-3 text-gray-400 rounded-lg cursor-not-allowed bg-gray-50 w-full dark:bg-gray-800 dark:text-gray-500">    
-                Disabled
-                </a>
-            </li>
+           
           </ul>
         </div>
       </div>}

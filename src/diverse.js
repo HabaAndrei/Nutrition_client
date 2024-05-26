@@ -143,9 +143,9 @@ function returnNutrients(arrayCuAlimente){
         let quantity = aliment.quantity;
         const numarDeCantitate = quantity.split(' ')[0];
         /////////////////////////////
-        console.log(quantity, '----');
-        console.log(numarDeCantitate, 'cantiattea => si pe asta sa o adaug in raport =<<<<<<<');
-        console.log(aliment);
+        // console.log(quantity, '----');
+        // console.log(numarDeCantitate, 'cantiattea => si pe asta sa o adaug in raport =<<<<<<<');
+        // console.log(aliment);
         if(obCuValorileTotale['total_food_value']?.['cantitate']){
             obCuValorileTotale['total_food_value']['cantitate'] += Number(numarDeCantitate);
         }else{

@@ -3,10 +3,13 @@ import { useEffect, useState } from 'react'
 import { adresaServer } from '../diverse.js'
 import {ContextUser} from '../App.js';
 import axios from 'axios';
+import Modal_delete from './Modal_delete.js';
+
 
 const Pay_component = () => {
 
   const [user, setUser] = React.useContext(ContextUser);
+  const [isModalOpen, setIsModalOpen] = useState({type: false});
 
   const produse = [{name: 'Small package', price: 7, id: '1', tokens: 100},
   {name: 'Mediul package', price: 12, id: '2', tokens: 300},
@@ -28,6 +31,10 @@ const Pay_component = () => {
     
   return (
     <div  >
+
+      <Modal_delete  mes={'Are you sure you want to delete this subscription?'} isModalOpen={isModalOpen} 
+      setIsModalOpen={setIsModalOpen} stergem={deleteSubscription} id={isModalOpen.id} />
+
 
       <div>
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -77,13 +84,30 @@ const Pay_component = () => {
         </div>
       </div>
 
-      <div>
+      <div style={{padding: '10px'}} >
         {user?.abonamente?.length ? user.abonamente.map((obiect, index)=>{
-          // console.log(obiect);
-          return <div key={index} >
 
-            <button onClick={()=>deleteSubscription(obiect.id_abonament)} >Sterge abonament!! {obiect.id_abonament}</button>
-          </div>
+          return <ul key={index} className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+            <li className='mb-2 text-lg font-semibold text-gray-900' >
+              Subscription {index + 1}
+            </li>
+            <li>
+              Started: {new Date(Number(obiect.inceput_abonament)).toLocaleString().slice(0, 10)}
+            </li>
+            <li>
+              Next pay: {new Date(Number(obiect.final_abonament)).toLocaleString().slice(0, 10)}
+            </li>
+            <li>
+              Price: {obiect.pret_abonament}€
+            </li>
+            <li>
+              Remaining tokens: {obiect.numar_tokeni}
+            </li>
+            <li>
+              <button onClick={()=>{setIsModalOpen({type:true, id: obiect.id_abonament})}} >Delete subscription</button>
+            </li>
+            
+          </ul>
         }) : <div></div> }
       </div>
 

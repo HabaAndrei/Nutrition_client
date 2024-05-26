@@ -14,15 +14,15 @@ const ContextAlert = React.createContext();
 const App = () => {
 
   const [user, setUser] = useState(false);
-
   const [arWithAlerts, setArWithAlerts] = useState([]);
+
+
 
   useEffect(()=>{
     onAuthStateChanged(auth, (userul) => {
       if (userul) {
         setUser(userul);
-        axios.post(`${adresaServer}/getDataUser`, {email: userul.email}).then((data)=>{
-          // console.log(data.data);
+        axios.post(`${adresaServer}/getDataUser_abonamente`, {email: userul.email}).then((data)=>{
           setUser(prev => ({...prev, abonamente: data.data}));
         })
       } else {
@@ -62,7 +62,7 @@ const App = () => {
             <Routes>
               <Route path="settings" element={<Settings addNewAlert={addNewAlert} />} />
               <Route path="/" element={<Home  addNewAlert={addNewAlert} />} />
-              <Route path="chatPage" element={<Chat_page />} />
+              <Route path="chatPage" element={<Chat_page   addNewAlert={addNewAlert} />} />
             </Routes>
           </Router>
         </ContextAlert.Provider>
@@ -74,12 +74,7 @@ const App = () => {
 export { App, ContextUser, ContextAlert}
 
 
-// fac cod pt a sterge din tokeni , mai ales ca trebuie sa ii si afisiez undeva pe ecran !!
-
-// daca abonamentul e sterg ok il sterg si din componenta user
-
-// vezi problema de la rap.js cand apas pe o conversatie
-
+// adaug loading atunci cand trimit un mesaj 
 
 // fac o functie univeral pt a stoca mesajele din cov si rap, difereta intre ele este 
 //  =>> doar la un parametru conv si rap

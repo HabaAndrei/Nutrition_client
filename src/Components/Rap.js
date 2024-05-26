@@ -25,6 +25,7 @@ const Rap = (props) => {
   useEffect(()=>{
     const id_conversatie = luamIdDinUrl('rap')
     luamConversatiaDupaId(id_conversatie);
+
   }, [])
 
   useEffect(()=>{
@@ -79,6 +80,14 @@ const Rap = (props) => {
   }
 
   function trimiteMesaj(){
+
+    if(!textInInput.length)return;
+
+    if(!verifyTokens()){
+      props.addNewAlert({id: '8', culoare: 'red', mesaj: 'Unfortunately, you have no more tokens.'});
+      return;
+    }
+
     const intrebare = textInInput;
     setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: textInInput}, {tip_mesaj: 'raspuns', mesaj: []}])
     fetch(`${adresaServer_ai}/analyze_recipe`, {
@@ -98,6 +107,7 @@ const Rap = (props) => {
       const nutrients = returnNutrients(data);
       const ar_strFin = returnArStr(nutrients);
       /////
+      dropTokens();
       stocamMesajeleInDB(intrebare, JSON.stringify(ar_strFin));
       setArrayCuMesaje((obiecte)=>{
         obiecte[obiecte.length - 1].mesaj = ar_strFin;
@@ -114,12 +124,6 @@ const Rap = (props) => {
   }
 
 
-  // function getMesFromDB(id_conversatie){
-  //   axios.post(`${adresaServer}/getMesFromDB`, {id_conversatie}).then((data)=>{
-  //     setArrayCuMesaje(data.data);
-  //     punemAltIdInUrl('rap', id_conversatie);
-  //   })
-  // }
 
   function stergemConv(id_conversatie){
     
@@ -135,6 +139,42 @@ const Rap = (props) => {
     setArrayCuMesaje([]);
     stergemParamDinUrl('rap');
   }
+
+  //////////////////// =>>>>>> scademtokeni
+
+  function dropTokens(){
+    const arrayCuAbonamanete = user.abonamente;
+    let arNou = [];
+    let validareFacuta = false;
+    for(let ob_abonament of arrayCuAbonamanete){
+      if(validareFacuta){arNou.push(ob_abonament); continue;}
+
+      if(Number(ob_abonament.numar_tokeni) > 0){ob_abonament.numar_tokeni = (Number(ob_abonament.numar_tokeni) - 1);
+        arNou.push(ob_abonament); 
+        validareFacuta = true;
+        axios.post(`${adresaServer}/dropTokens`, {ob_abonament, uid: user.uid}).then((data)=>{
+          // console.log(data);
+          // setTokeni(tokeni - 1);
+        })
+        continue;
+      }
+    }
+    // console.log(arNou, '--------------')
+    setUser((prev)=>({...prev, abonamente : [...arNou]}));
+  }
+
+  function verifyTokens(){
+    const arrayCuAbonamanete = user.abonamente;
+    let is_tokens = false;
+    if(!arrayCuAbonamanete?.length)return false;
+    for(const ob_abonament of arrayCuAbonamanete){
+      if(Number(ob_abonament.numar_tokeni) > 0){is_tokens = true; break} 
+    }
+    return is_tokens;
+  }
+  
+  
+  ///////////////////
 
   return (
     <div className='fullPage-second' >
@@ -184,9 +224,9 @@ const Rap = (props) => {
             return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
               <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
                 <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-                  {obiect.mesaj.length &&  obiect.mesaj.map((nutrient, index)=>{
+                  {obiect.mesaj.length ? obiect.mesaj.map((nutrient, index)=>{
                     return <li key={index} > {nutrient}</li>
-                  })  }                 
+                  }) : <div></div> }                 
                 </ul>
               </div>
             </div>

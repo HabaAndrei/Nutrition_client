@@ -72,6 +72,12 @@ const Conv = (props) => {
 
   function trimitemMesajulAi(){
 
+    if(!textInInput.length)return;
+    
+    if(!verifyTokens()){
+      props.addNewAlert({id: '8', culoare: 'red', mesaj: 'Unfortunately, you have no more tokens.'});
+      return;
+    }
     const intrebare = textInInput;
     setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: textInInput}, {tip_mesaj: 'raspuns', mesaj: ''}])
     fetch(`${adresaServer_ai}/send_mes`, {
@@ -93,7 +99,7 @@ const Conv = (props) => {
         reader.read().then(({done, value})=>{
           if(done){
             stocamMesajeleInDB(intrebare, raspunsul_stream);
-
+            dropTokens();
             setAr_Mes_Stream([]);
 
           }else{
@@ -105,12 +111,9 @@ const Conv = (props) => {
           }
         });
       }
-
       readStream();
-
     })
   }
-
 
 
   function getConvFromDB(conversatie, uid){
@@ -118,17 +121,6 @@ const Conv = (props) => {
       setArCuConversatii(data.data);
     })
   }
-
-
-
-  // function getMesFromDB(id_conversatie){
-  //   axios.post(`${adresaServer}/getMesFromDB`, {id_conversatie}).then((data)=>{
-  //     setArrayCuMesaje(data.data);
-  //     punemAltIdInUrl('conv', id_conversatie);
-
-  //   })
-  // }
-
 
   function stergemConv(id_conversatie){    
     axios.post(`${adresaServer}/deleteConv`, {id_conversatie}).then((data)=>{
@@ -144,6 +136,41 @@ const Conv = (props) => {
     stergemParamDinUrl('conv');
     setTextInInput('');
   }
+
+  //////////////////// =>>>>>> scademtokeni
+
+  function dropTokens(){
+    const arrayCuAbonamanete = user.abonamente;
+    let arNou = [];
+    let validareFacuta = false;
+    for(let ob_abonament of arrayCuAbonamanete){
+      if(validareFacuta){arNou.push(ob_abonament); continue;}
+
+      if(Number(ob_abonament.numar_tokeni) > 0){ob_abonament.numar_tokeni = (Number(ob_abonament.numar_tokeni) - 1);
+        arNou.push(ob_abonament); 
+        validareFacuta = true;
+        axios.post(`${adresaServer}/dropTokens`, {ob_abonament, uid: user.uid}).then((data)=>{
+          // console.log(data);
+        })
+        continue;
+      }
+    }
+    // console.log(arNou, '--------------')
+    setUser((prev)=>({...prev, abonamente : [...arNou]}));
+  }
+
+  function verifyTokens(){
+    const arrayCuAbonamanete = user.abonamente;
+    let is_tokens = false;
+    if(!arrayCuAbonamanete?.length)return false;
+    for(const ob_abonament of arrayCuAbonamanete){
+      if(Number(ob_abonament.numar_tokeni) > 0){is_tokens = true; break} 
+    }
+    return is_tokens;
+  }
+  
+  
+  ///////////////////
 
 
   return (
