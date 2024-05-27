@@ -22,8 +22,8 @@ const Conv = (props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(()=>{
-    const id_conversatie = luamIdDinUrl('conv')
-    luamConversatiaDupaId(id_conversatie);
+    const id_conversatie = luamIdDinUrl('conv');
+    if(id_conversatie)luamConversatiaDupaId(id_conversatie);
   }, [])
 
   useEffect(()=>{
@@ -46,6 +46,8 @@ const Conv = (props) => {
     axios.post(`${adresaServer}/getConvWithId`, {id_conversatie}).then((data)=>{
       setArrayCuMesaje(data.data);
       punemAltIdInUrl('conv', id_conversatie);
+    }).catch((err)=>{
+      console.log(err);
     })
   }
 
@@ -67,7 +69,9 @@ const Conv = (props) => {
       ).then((data)=>{
           // console.log(data);
         }
-      )
+      ).catch((err)=>{
+        console.log(err);
+      })
     }catch(err){
       console.log(err);
     }
@@ -124,6 +128,8 @@ const Conv = (props) => {
   function getConvFromDB(conversatie, uid){
     axios.post(`${adresaServer}/getConvFromDB` , {conversatie, uid}).then((data)=>{
       setArCuConversatii(data.data);
+    }).catch((err)=>{
+      console.log(err);
     })
   }
 
@@ -133,6 +139,8 @@ const Conv = (props) => {
       let indexConv = arCuConversatii.findIndex((ob)=>ob.id_conversatie === id_conversatie);
       setArCuConversatii(arCuConversatii.slice(0 , indexConv).concat(arCuConversatii.slice(indexConv+1, arCuConversatii.length)));
       // setIsModalOpen({type: false});
+    }).catch((err)=>{
+      console.log(err);
     })
   }
 
@@ -156,6 +164,8 @@ const Conv = (props) => {
         validareFacuta = true;
         axios.post(`${adresaServer}/dropTokens`, {ob_abonament, uid: user.uid}).then((data)=>{
           // console.log(data);
+        }).catch((err)=>{
+          console.log(err);
         })
         continue;
       }

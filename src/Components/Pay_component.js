@@ -25,6 +25,8 @@ const Pay_component = () => {
         if(obiect.id_abonament != id) noulArray.push(obiect);
       }
       setUser((prev)=> ({...prev, abonamente : [...noulArray]}))
+    }).catch((err)=>{
+      console.log(err);
     })
   }
   
@@ -87,27 +89,31 @@ const Pay_component = () => {
       <div style={{padding: '10px'}} >
         {user?.abonamente?.length ? user.abonamente.map((obiect, index)=>{
 
-          return <ul key={index} className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-            <li className='mb-2 text-lg font-semibold text-gray-900' >
-              Subscription {index + 1}
-            </li>
-            <li>
-              Started: {new Date(Number(obiect.inceput_abonament)).toLocaleString().slice(0, 10)}
-            </li>
-            <li>
-              Next pay: {new Date(Number(obiect.final_abonament)).toLocaleString().slice(0, 10)}
-            </li>
-            <li>
-              Price: {obiect.pret_abonament}€
-            </li>
-            <li>
-              Remaining tokens: {obiect.numar_tokeni}
-            </li>
-            <li>
-              <button onClick={()=>{setIsModalOpen({type:true, id: obiect.id_abonament})}} >Delete subscription</button>
-            </li>
+          if(obiect.id_abonament === 'gratis'){
+            return <div key={index} ></div>
+          }else{
+            return <ul key={index} className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+              <li className='mb-2 text-lg font-semibold text-gray-900' >
+                Subscription 
+              </li>
+              <li>
+                Started: {new Date(Number(obiect.inceput_abonament)).toLocaleString().slice(0, 10)}
+              </li>
+              <li>
+                Next pay: {new Date(Number(obiect.final_abonament)).toLocaleString().slice(0, 10)}
+              </li>
+              <li>
+                Price: {obiect.pret_abonament}€
+              </li>
+              <li>
+                Remaining tokens: {obiect.numar_tokeni}
+              </li>
+              <li>
+                <button onClick={()=>{setIsModalOpen({type:true, id: obiect.id_abonament})}} >Delete subscription</button>
+              </li>
             
-          </ul>
+            </ul>
+          }
         }) : <div></div> }
       </div>
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { neConectamCuGoogle, stergemUtilizatorul, adresaServer_ai, adresaServer, neDeconectam, deruleazaInJos } from '../diverse';
+import { neConectamCuGoogle,  adresaServer_ai, adresaServer,  deruleazaInJos } from '../diverse';
 import {ContextUser} from '../App.js';
 import { useNavigate } from "react-router-dom";
 import Loading from '../Components/Loading.js';
@@ -83,6 +83,8 @@ const Home = (props) => {
             readStream();
           })
         }
+      }).catch((err)=>{
+        console.log(err);
       })
      
     }catch (err){
@@ -127,13 +129,14 @@ const Home = (props) => {
       </div>
 
 
-      <div>
+      <div style={{padding: '20px'}}  >
         
         <a className="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
             <img className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="../../poza_1.jpg" alt="" />
             <div className="flex flex-col justify-between p-4 leading-normal">
-                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
-                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Smart nutrition</h5>
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Welcome to us. We will make sure you have a good experience.</p>
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400" >We are an artificial intelligence company that through our work offers recipes for when you don't have inspiration. Recipes with any type of food. We analyze recipes to provide the correct nutritional values.</p>
             </div>
         </a>
 
@@ -186,13 +189,61 @@ const Home = (props) => {
       </div>
 
 
-      <div>
-        <p>Aici sa fac o parte de statistici cu top 100 grame proteina vitamina etc</p>
+      <div style={{'padding': '20px'}}  className="flex justify-end" >
         
+        <a  className="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <div className="flex flex-col justify-between p-4 leading-normal">
+                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"> 'Mens sana in corpore sano' </h5>
+                <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">A healthy mind in a healthy body.</span>
 
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400"> 
+                  We offer the possibility to have different conversations with our nutrition bot so that it takes a history and to be able to keep the recipes without being modified.
+                </p>
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400"> 
+                  This site was made out of passion and to help the world to be more responsible for its food.
+                </p>
+
+            </div>
+        </a>
+
+      </div>
+
+      <div style={{padding: '20px'}}  >
+        
+        <a className="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div className="flex flex-col justify-between p-4 leading-normal">
+              <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Statistics:</h5>
+              <ul className="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+                <li>
+                  Over 1.9 billion adults, 18 years and older, are overweight. Of these, more than 650 million are obese.
+                </li>
+
+                <li>
+                 Over 340 million children and adolescents aged 5-19 were overweight or obese in 2016.
+                </li>
+
+                <li>
+                  {'High sodium consumption (>2 grams/day) is prevalent globally, increasing the risk of cardiovascular diseases. The WHO recommends reducing sodium intake to less than 2 grams per day.'}
+                </li>
+                <li>
+                  WHO recommends reducing the intake of free sugars to less than 10% of total energy intake. Reducing it to below 5% has additional health benefits.
+                </li>
+                <li>
+                  It is a significant public health issue in over half of all countries, especially in Africa and Southeast Asia, affecting approximately 250 million preschool children.
+                </li>
+
+              </ul>
+              
+          </div>
+        </a>
+
+      </div>
+
+      <div>
+        
         <div className='bg-gray-50 dark:bg-gray-700' >
           <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-          <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 <a href="https://flowbite.com/" className="hover:underline">Flowbite™</a>. All Rights Reserved.</span>
+          <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 <a href="" className="hover:underline">Nutrition™</a>. All Rights Reserved.</span>
         </div>
       </div>
       

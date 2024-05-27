@@ -32,6 +32,7 @@ const Settings = (props) => {
     if(parametruDinUrl)stergemParamDinUrl('pay_finsh');
   }, [])
 
+  
   return (
     <div className='setPage'  >
 

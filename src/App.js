@@ -22,9 +22,6 @@ const App = () => {
     onAuthStateChanged(auth, (userul) => {
       if (userul) {
         setUser(userul);
-        axios.post(`${adresaServer}/getDataUser_abonamente`, {email: userul.email}).then((data)=>{
-          setUser(prev => ({...prev, abonamente: data.data}));
-        })
       } else {
         setUser(false);
       }
@@ -74,7 +71,10 @@ const App = () => {
 export { App, ContextUser, ContextAlert}
 
 
-// adaug loading atunci cand trimit un mesaj 
+
+
+// rezolv partea cu navigarea pe pagini unde un client nu are voie!!!!!!
+
 
 // fac o functie univeral pt a stoca mesajele din cov si rap, difereta intre ele este 
 //  =>> doar la un parametru conv si rap

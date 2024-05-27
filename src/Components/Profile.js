@@ -8,7 +8,9 @@ import Modal_delete from './Modal_delete.js';
 import { useNavigate } from "react-router-dom";
 
 
-const Profile = () => {
+const Profile = (props) => {
+
+
     const [user, setUser] = useContext(ContextUser);
     const [srcFile, setSrcFile] = useState('');
     const [isModalOpen, setIsModalOpen] = useState({type: false});
@@ -17,12 +19,8 @@ const Profile = () => {
 
     useEffect(() => {
         if (user) setSrcFile(`${adresaServer}/${user.uid}.jpg`);
-
     }, [user]);
 
-    useEffect(()=>{
-        if(isModalOpen.confirm)navigate('/');
-    }, [isModalOpen])
 
     const selectFile = (e) => {
         const data = e.target.files[0];
@@ -43,10 +41,23 @@ const Profile = () => {
         });
     };
 
+    async function handleDeleteUser(){
+        const rezultat = await stergemUtilizatorul();
+        if(!rezultat){
+            props.addNewAlert({id: '9', culoare: 'yellow', mesaj: 'I recommend that you first log out, log back in, and then take the step to delete the user.'});
+        }else{
+            props.addNewAlert({id: '10', culoare: 'green', mesaj: 'The user has been successfully deleted.'});
+            navigate('/');
+        }
+    }
+    
+    
+   
+
     return (
         <div>
             <Modal_delete  mes={'Are you sure you want to delete your account?'} isModalOpen={isModalOpen} 
-            setIsModalOpen={setIsModalOpen} stergem={stergemUtilizatorul} />
+            setIsModalOpen={setIsModalOpen} stergem={handleDeleteUser} />
 
 
             <div>
@@ -77,6 +88,8 @@ const Profile = () => {
                     </button>
                 </div>
 
+                
+               
             </div>
         </div>
     );

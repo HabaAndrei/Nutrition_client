@@ -8,7 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { IoSettingsOutline } from "react-icons/io5";
 import {ContextUser} from '../App.js';
-
+import { adresaServer } from '../diverse.js';
+import axios from 'axios';
 
 
 
@@ -22,6 +23,8 @@ const Chat_page = (props) => {
   const [tokeni, setTokeni] = useState();
 
   useEffect(()=>{
+
+    
     if(user?.abonamente?.length){
       let sum = 0;
       user.abonamente.forEach((obiect)=>{
@@ -30,6 +33,15 @@ const Chat_page = (props) => {
       setTokeni(sum);
     }
   }, [user]);
+
+  useEffect(()=>{
+    axios.post(`${adresaServer}/getDataUser_abonamente`, {email: user.email}).then((data)=>{
+      // console.log(data.data);
+      setUser(prev => ({...prev, abonamente: data.data}));
+    }).catch((err)=>{
+      console.log(err);
+    })
+  }, [])
 
 
   return (

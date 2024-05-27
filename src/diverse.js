@@ -46,17 +46,23 @@ function neDeconectam(){
 }
 
 
-function stergemUtilizatorul(){
+async function stergemUtilizatorul(){
     const user = auth.currentUser;
-    console.log(user, '------------')
-    deleteUser(user).then(() => {
-        console.log('a intrat sa execute si asat !!!======')
-        axios.post(`${adresaServer}/stergemUtilizatorul`, {uid: user.uid}).then((data)=>{
-            console.log(data);
+    // console.log(user, '------------')
+    let rezultat = true;
+    await deleteUser(user).then(() => {
+        // console.log('a intrat sa execute si asat !!!======')
+        axios.post(`${adresaServer}/stergemUtilizatorul`, {uid: user.uid, email: user.email}).then((data)=>{
+            // console.log(data);
+            // return true;
+        }).catch((err)=>{
+            console.log(err);
         })
     }).catch((error) => {
-        console.log(error, '----------aceasta este eroarea de care dam')
+        // console.log(error, '----------aceasta este eroarea de care dam')
+        rezultat =  false;
     });
+    return rezultat;
 }
 
 function neConectamCuGoogle(){
@@ -211,22 +217,6 @@ const VisuallyHiddenInput = styled("input")`
 `;
 
 
-
-// function stocamMesajeleInDB(intrebare, raspuns, id_conversatie, uid, conv){
-//     try{
-//         axios.post(`${adresaServer}/stocamMesajele`, {
-//           arMes: [ {
-//             tip_mesaj: 'intrebare', mesaj: intrebare, 
-//           }, {tip_mesaj: 'raspuns', mesaj: raspuns}], 
-//           id_conversatie: id_conversatie, data: milisecGreenwich(), uid: uid, conversatie: conv}
-//         ).then((data)=>{
-//             // console.log(data);
-//           }
-//         )
-//     }catch(err){
-//     console.log(err);
-//     }
-// }
 
 
 export { VisuallyHiddenInput, returnArStr, returnNutrients, putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
