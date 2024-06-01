@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut,  onAuthStateChanged, deleteUser } from "firebase/auth";
+import { GoogleAuthProvider, reauthenticateWithCredential, getAuth, signInWithPopup, signOut,  OAuthProvider, reauthenticateWithPopup, deleteUser } from "firebase/auth";
 import axios from 'axios';
 import uuid from 'react-uuid';
 import { styled } from "@mui/system";
@@ -20,7 +20,6 @@ function milisecGreenwich() {
 // ==> firebase
 
 const provider = new GoogleAuthProvider();
-    
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY ,
@@ -35,6 +34,20 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth();
 
+async function reconectam(){
+        
+    const prov = new OAuthProvider('google.com');
+
+    let rezultat = false;
+    await reauthenticateWithPopup(auth.currentUser, prov)
+    .then((result) => {
+        const credential = OAuthProvider.credentialFromResult(result);
+        rezultat = credential;
+    }).catch((error) => {
+        rezultat = false;
+    });
+    return rezultat
+}
 
 
 function neDeconectam(){
@@ -46,21 +59,33 @@ function neDeconectam(){
 }
 
 
+
 async function stergemUtilizatorul(){
     const user = auth.currentUser;
     // console.log(user, '------------')
-    let rezultat = true;
-    await deleteUser(user).then(() => {
+    let rezultat = {type: true};
+    await deleteUser(user).then( async () => {
         // console.log('a intrat sa execute si asat !!!======')
-        axios.post(`${adresaServer}/stergemUtilizatorul`, {uid: user.uid, email: user.email}).then((data)=>{
+        await axios.post(`${adresaServer}/stergemUtilizatorul`, {uid: user.uid, email: user.email}).then((data)=>{
             // console.log(data);
-            // return true;
+            rezultat = {type: true};
+
         }).catch((err)=>{
             console.log(err);
+            // rezultat = {type: false, mes: 'Am intampinat o alta eroare la stergere din db'};
+
         })
-    }).catch((error) => {
-        // console.log(error, '----------aceasta este eroarea de care dam')
-        rezultat =  false;
+    }).catch( async (err)=>{
+        if(err['code'] === 'auth/requires-recent-login'){
+            // ne reconectam
+            const rez = await reconectam();
+            if(rez)stergemUtilizatorul();
+            else rezultat =  {type: false, mes: 'DUnfortunately, I encountered a problem in deleting the user.'};
+        }else{
+            rezultat =  {type: false, mes: 'Unfortunately, I encountered a problem in deleting the user.'};
+
+        }
+
     });
     return rezultat;
 }
@@ -70,15 +95,15 @@ function neConectamCuGoogle(){
     .then((result) => {
         const user = result.user;
         const milisec = milisecGreenwich();
-        try{
-          axios.post(`${adresaServer}/insertDateU_google`, {
-            uid: user.uid, email:user.email, name: user.displayName, milisec,  metoda_creare: 'google'
-            }).then((data)=>{
-            // console.log(data);
-          })
-        }catch (err){
-          console.log(err);
-        }
+        
+        axios.post(`${adresaServer}/insertDateU_google`, {
+        uid: user.uid, email:user.email, name: user.displayName, milisec,  metoda_creare: 'google'
+        }).then((data)=>{
+        // console.log(data);
+        }).catch((err)=>{
+        console.log(err);
+        })
+       
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;

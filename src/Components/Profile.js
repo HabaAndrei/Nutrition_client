@@ -6,6 +6,7 @@ import Button from "@mui/joy/Button";
 import Avatar from "@mui/material/Avatar";
 import Modal_delete from './Modal_delete.js';
 import { useNavigate } from "react-router-dom";
+//////////////////////
 
 
 const Profile = (props) => {
@@ -43,16 +44,15 @@ const Profile = (props) => {
 
     async function handleDeleteUser(){
         const rezultat = await stergemUtilizatorul();
-        if(!rezultat){
-            props.addNewAlert({id: '9', culoare: 'yellow', mesaj: 'I recommend that you first log out, log back in, and then take the step to delete the user.'});
+        if(!rezultat.type){
+            props.addNewAlert({id: '9', culoare: 'yellow', mesaj: rezultat.mes});
         }else{
             props.addNewAlert({id: '10', culoare: 'green', mesaj: 'The user has been successfully deleted.'});
             navigate('/');
         }
     }
-    
-    
-   
+
+  
 
     return (
         <div>
@@ -87,6 +87,12 @@ const Profile = (props) => {
                         Delete account
                     </button>
                 </div>
+
+                {/* <div style={{background: 'yellow'}} >
+                    <button onClick={reconectam} >
+                        testam
+                    </button>
+                </div> */}
 
                 
                
