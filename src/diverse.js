@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { GoogleAuthProvider, reauthenticateWithCredential, getAuth, signInWithPopup, signOut,  OAuthProvider, reauthenticateWithPopup, deleteUser } from "firebase/auth";
+import { GoogleAuthProvider, getAuth, signInWithPopup, signOut,  OAuthProvider, reauthenticateWithPopup, deleteUser } from "firebase/auth";
 import axios from 'axios';
 import uuid from 'react-uuid';
 import { styled } from "@mui/system";
@@ -173,10 +173,7 @@ function returnNutrients(arrayCuAlimente){
     for(let aliment of arrayCuAlimente){
         let quantity = aliment.quantity;
         const numarDeCantitate = quantity.split(' ')[0];
-        /////////////////////////////
-        // console.log(quantity, '----');
-        // console.log(numarDeCantitate, 'cantiattea => si pe asta sa o adaug in raport =<<<<<<<');
-        // console.log(aliment);
+        
         if(obCuValorileTotale['total_food_value']?.['cantitate']){
             obCuValorileTotale['total_food_value']['cantitate'] += Number(numarDeCantitate);
         }else{
@@ -197,10 +194,7 @@ function returnNutrients(arrayCuAlimente){
             let numarPerSuta = Number(ar_nr_cant[0]);
             if (isNaN(numarPerSuta))numarPerSuta = 0;
             const cantitateaFinala = returnValNum(numarDeCantitate, numarPerSuta);
-            // if(numeNutrient === 'protein'){
-            //     console.log({cantitateaFinala, numarDeCantitate, numarPerSuta} )
-
-            // }
+            
             if(obCuValorileTotale[numeNutrient]?.['unitate_de_masura']){
                 obCuValorileTotale[numeNutrient]['cantitate'] += cantitateaFinala;
             }else{
@@ -215,7 +209,7 @@ function returnNutrients(arrayCuAlimente){
 }
 
 function returnArStr(ob_de_ob){
-    // console.log(ob_de_ob);
+   
 
     let ar_str_fin = [];
     for(let cheie of Object.keys(ob_de_ob)){
@@ -225,6 +219,8 @@ function returnArStr(ob_de_ob){
     }
     return ar_str_fin;
 }
+
+
 //// <<<<<<<<<=============  editare date raport nutrienti
 
 

@@ -21,13 +21,23 @@ const App = () => {
   useEffect(()=>{
     onAuthStateChanged(auth, (userul) => {
       if (userul) {
-        console.log(userul);
         setUser(userul);
       } else {
         setUser(false);
       }
     });
   }, []);
+
+  useEffect(()=>{
+    if(!user.abonamente){
+      axios.post(`${adresaServer}/getDataUser_abonamente`, {email: user.email}).then((data)=>{
+        setUser(prev => ({...prev, abonamente: data.data}));
+      }).catch((err)=>{
+        console.log(err);
+      })
+    }
+    
+  }, [user])
 
 
 
@@ -43,7 +53,6 @@ const App = () => {
       }
     })
   }
-
 
 
   return (
@@ -73,6 +82,9 @@ export { App, ContextUser, ContextAlert}
 
 
 
+// nu primesc ultimul cuvant in chat => nu se randeaza pe pagina 
+
+// scot scrolpul din home .js la mesaje
 
 // rezolv partea cu navigarea pe pagini unde un client nu are voie!!!!!!
 

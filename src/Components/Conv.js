@@ -121,6 +121,10 @@ const Conv = (props) => {
         });
       }
       readStream();
+    }).catch((err)=>{
+      console.log(err);
+      props.addNewAlert({id: '12', culoare: 'blue', mesaj: 'Unfortunately we have infrastructure problems, come back soon.'});
+
     })
   }
 

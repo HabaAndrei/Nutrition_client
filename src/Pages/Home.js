@@ -27,9 +27,7 @@ const Home = (props) => {
     })
   }, [ar_mes_stream])
 
-  useEffect(()=>{
-    deruleazaInJos('scrollJos_trei');
-  }, [arrayCuMesaje])
+
 
 
   function trimiteMesaj(){
@@ -81,6 +79,9 @@ const Home = (props) => {
             }
 
             readStream();
+          }).catch((err)=>{
+            console.log(err);
+            props.addNewAlert({id: '12', culoare: 'blue', mesaj: 'Unfortunately we have infrastructure problems, come back soon.'});
           })
         }
       }).catch((err)=>{
@@ -145,7 +146,7 @@ const Home = (props) => {
 
 
       {/* divul cu conversatia */}
-      <div className='divConversatie'  id='scrollJos_trei'>
+      <div className='divConversatie'  >
 
         <div>
 

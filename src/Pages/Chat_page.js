@@ -34,14 +34,7 @@ const Chat_page = (props) => {
     }
   }, [user]);
 
-  useEffect(()=>{
-    axios.post(`${adresaServer}/getDataUser_abonamente`, {email: user.email}).then((data)=>{
-      // console.log(data.data);
-      setUser(prev => ({...prev, abonamente: data.data}));
-    }).catch((err)=>{
-      console.log(err);
-    })
-  }, [])
+ 
 
 
   return (

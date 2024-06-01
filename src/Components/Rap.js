@@ -122,6 +122,10 @@ const Rap = (props) => {
         obiecte[obiecte.length - 1].mesaj = ar_strFin;
         return [...obiecte];
       })
+    }).catch((err)=>{
+      console.log(err);
+      props.addNewAlert({id: '12', culoare: 'blue', mesaj: 'Unfortunately we have infrastructure problems, come back soon.'});
+
     })
   }
 
@@ -276,4 +280,4 @@ const Rap = (props) => {
   )
 }
 
-export default Rap
+export default Rap;

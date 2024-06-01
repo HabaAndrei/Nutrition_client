@@ -29,6 +29,8 @@ const Pay_component = () => {
       console.log(err);
     })
   }
+
+
   
     
   return (

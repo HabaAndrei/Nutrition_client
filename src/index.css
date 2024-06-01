@@ -32,8 +32,6 @@ code {
 .divConversatie {
   padding-left: 20%;
   padding-right: 20%;
-  max-height: 250px; 
-  overflow-y: scroll;
 }
 
 .divConversatie::-webkit-scrollbar {
