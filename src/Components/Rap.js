@@ -2,7 +2,7 @@ import React from 'react'
 import { LuSend } from "react-icons/lu";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import {returnArStr, returnNutrients, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
+import {calcTotalFood, makeArWithString, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, adresaServer_ai,adresaServer, deruleazaInJos, milisecGreenwich} from '../diverse.js';
 import {ContextUser} from '../App.js';
 import { FaTrashAlt } from "react-icons/fa";
 import { IoChatbox } from "react-icons/io5";
@@ -112,16 +112,15 @@ const Rap = (props) => {
       setTextInInput('');
       setIsLoading(false);
 
-      /////
-      const nutrients = returnNutrients(data);
-      const ar_strFin = returnArStr(nutrients);
-      /////
+      const n = calcTotalFood(data);
+      const n2 = makeArWithString(n);
       dropTokens();
-      stocamMesajeleInDB(intrebare, JSON.stringify(ar_strFin));
+      stocamMesajeleInDB(intrebare, JSON.stringify(n2));
       setArrayCuMesaje((obiecte)=>{
-        obiecte[obiecte.length - 1].mesaj = ar_strFin;
+        obiecte[obiecte.length - 1].mesaj = n2;
         return [...obiecte];
       })
+
     }).catch((err)=>{
       console.log(err);
       props.addNewAlert({id: '12', culoare: 'blue', mesaj: 'Unfortunately we have infrastructure problems, come back soon.'});

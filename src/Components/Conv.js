@@ -86,6 +86,7 @@ const Conv = (props) => {
       props.addNewAlert({id: '8', culoare: 'red', mesaj: 'Unfortunately, you have no more tokens.'});
       return;
     }
+
     const intrebare = textInInput;
     setArrayCuMesaje([...arrayCuMesaje, {tip_mesaj: 'intrebare', mesaj: textInInput}, {tip_mesaj: 'raspuns', mesaj: ''}])
     fetch(`${adresaServer_ai}/send_mes`, {
@@ -109,8 +110,8 @@ const Conv = (props) => {
           if(done){
             stocamMesajeleInDB(intrebare, raspunsul_stream);
             dropTokens();
-            setAr_Mes_Stream([]);
-
+            setTimeout(()=>setAr_Mes_Stream([]), 500);
+            // setAr_Mes_Stream([]);
           }else{
             let cuv =  decoder.decode(value, {stream: true});
             raspunsul_stream += cuv;

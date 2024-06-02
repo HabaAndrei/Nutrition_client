@@ -23,7 +23,7 @@ const Chat_page = (props) => {
   const [tokeni, setTokeni] = useState();
 
   useEffect(()=>{
-
+ 
     
     if(user?.abonamente?.length){
       let sum = 0;

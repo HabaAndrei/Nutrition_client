@@ -166,60 +166,57 @@ function returnValNum(catitate, valPerSuta){
     return (catitate / 100) * valPerSuta;
 }
 
-function returnNutrients(arrayCuAlimente){
-    const arDeSarit = ['food_name', 'id'];
-    const obCuValorileTotale = {};
+function calcTotalFood(arrayCuObMancare){
 
-    for(let aliment of arrayCuAlimente){
-        let quantity = aliment.quantity;
-        const numarDeCantitate = quantity.split(' ')[0];
+    const arExcluderi = ['id', 'food_name'];
+    const mancareCareAMaiFost = [];
+    let obFin = {};
+  
+    for(let aliment of arrayCuObMancare){
+      // verific daca numele mancarii se dubleaza
+      if(mancareCareAMaiFost.includes(aliment.name)){continue;
+      }else{mancareCareAMaiFost.push(aliment.name)};
+  
+      const nr_cant = aliment.quantity.split(' ');
+      const cantitate_per_portie = Number(nr_cant[0]);
+  
+      if(obFin['total_food_value']){
+        obFin.total_food_value.cant += cantitate_per_portie;
+      }else{
+        obFin['total_food_value'] = {};
+        obFin.total_food_value.cant = cantitate_per_portie;
+        obFin.total_food_value.val = 'g' 
+      }
+  
+      for(let ob_nutrient of aliment.nutrients){
         
-        if(obCuValorileTotale['total_food_value']?.['cantitate']){
-            obCuValorileTotale['total_food_value']['cantitate'] += Number(numarDeCantitate);
+        const numeNutrient = Object.keys(ob_nutrient)[0]
+        if(arExcluderi.includes(numeNutrient))continue;
+        let cant_per_suta = Number(Object.values(ob_nutrient)[0].split(' ')[0]);
+        if(isNaN(cant_per_suta))cant_per_suta = 0;
+        const cantitate_finala = (cantitate_per_portie / 100) * cant_per_suta;
+        const val_nutr = Object.values(ob_nutrient)[0].split(' ')[1];
+        if(obFin[numeNutrient]){
+          obFin[numeNutrient]['cant'] += cantitate_finala;
         }else{
-            obCuValorileTotale['total_food_value'] = {};
-            obCuValorileTotale['total_food_value']['cantitate'] = Number(numarDeCantitate);
-            obCuValorileTotale['total_food_value']['unitate_de_masura'] = 'g'
+          obFin[numeNutrient] = {};
+          obFin[numeNutrient]['cant'] = cantitate_finala;
+          obFin[numeNutrient].val = val_nutr;
         }
-        /////////////////////////////
-        if(isNaN(numarDeCantitate))quantity = 1;
-
-        for(let ob_nutrient of aliment.nutrients){
-
-            let numeNutrient = Object.keys(ob_nutrient)[0]
-            if(arDeSarit.includes(numeNutrient))continue;
-            let str_num_and_valCant = Object.values(ob_nutrient)[0];
-            const ar_nr_cant = str_num_and_valCant.split(' ');
-            
-            let numarPerSuta = Number(ar_nr_cant[0]);
-            if (isNaN(numarPerSuta))numarPerSuta = 0;
-            const cantitateaFinala = returnValNum(numarDeCantitate, numarPerSuta);
-            
-            if(obCuValorileTotale[numeNutrient]?.['unitate_de_masura']){
-                obCuValorileTotale[numeNutrient]['cantitate'] += cantitateaFinala;
-            }else{
-                obCuValorileTotale[numeNutrient] = {};
-                obCuValorileTotale[numeNutrient]['unitate_de_masura'] = ar_nr_cant[1];
-                obCuValorileTotale[numeNutrient]['cantitate'] = cantitateaFinala;
-            }
-
-        }
+      }
     }
-    return (obCuValorileTotale)
+    return obFin
 }
+  
 
-function returnArStr(ob_de_ob){
-   
-
-    let ar_str_fin = [];
-    for(let cheie of Object.keys(ob_de_ob)){
-        const numeNutrient = (cheie[0].toUpperCase() + cheie.slice(1, cheie.length)).replace(/_/g, ' ');
-        let valoare = JSON.stringify(ob_de_ob[cheie]['cantitate']).slice(0, 5) + ' ' +ob_de_ob[cheie]['unitate_de_masura']
-        ar_str_fin.push(numeNutrient + ' ' + valoare);
+function makeArWithString(obMare){
+    let arFin = [];
+    for(let nutrient of Object.keys(obMare)){
+      const numeNutrient = (nutrient[0].toUpperCase() + nutrient.slice(1, nutrient.length)).replace(/_/g, ' ');
+      arFin.push(numeNutrient + ' ' + JSON.stringify(obMare[nutrient].cant).slice(0, 4) + ' ' + obMare[nutrient].val) ;
     }
-    return ar_str_fin;
+    return arFin;
 }
-
 
 //// <<<<<<<<<=============  editare date raport nutrienti
 
@@ -240,4 +237,4 @@ const VisuallyHiddenInput = styled("input")`
 
 
 
-export { VisuallyHiddenInput, returnArStr, returnNutrients, putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
+export {calcTotalFood, makeArWithString, VisuallyHiddenInput, putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}

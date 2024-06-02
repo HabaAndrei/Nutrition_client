@@ -36,7 +36,6 @@ const App = () => {
         console.log(err);
       })
     }
-    
   }, [user])
 
 
@@ -60,12 +59,9 @@ const App = () => {
       <ContextUser.Provider value={[user, setUser]}>
         <ContextAlert.Provider value={[arWithAlerts, setArWithAlerts]}>
         
+          <AlertPage  />
           
-            <AlertPage  />
-          
-
           <Router>
-
             <Routes>
               <Route path="settings" element={<Settings addNewAlert={addNewAlert} />} />
               <Route path="/" element={<Home  addNewAlert={addNewAlert} />} />
@@ -82,12 +78,9 @@ export { App, ContextUser, ContextAlert}
 
 
 
-// nu primesc ultimul cuvant in chat => nu se randeaza pe pagina 
-
-// scot scrolpul din home .js la mesaje
+// rezolv partea cu cantritul mancarri in raport, a dat un rezultat eronat
 
 // rezolv partea cu navigarea pe pagini unde un client nu are voie!!!!!!
-
 
 // fac o functie univeral pt a stoca mesajele din cov si rap, difereta intre ele este 
 //  =>> doar la un parametru conv si rap

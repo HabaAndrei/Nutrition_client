@@ -61,12 +61,9 @@ const Home = (props) => {
             const decoder = new TextDecoder();
             
             function readStream(){
-
-
-
               reader.read().then(({done, value})=>{
                 if(done){
-                  setAr_Mes_Stream([]);
+                  setTimeout(()=>setAr_Mes_Stream([]), 500);
                 }else{
                   
                   let cuv =  decoder.decode(value, {stream: true});
