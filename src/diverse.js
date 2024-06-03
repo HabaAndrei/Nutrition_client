@@ -159,13 +159,6 @@ function deruleazaInJos(id){
 };
 
 ///// =>>>>>>>> editare data din raport nutrienti 
-function returnValNum(catitate, valPerSuta){
-
-
-
-    return (catitate / 100) * valPerSuta;
-}
-
 function calcTotalFood(arrayCuObMancare){
 
     const arExcluderi = ['id', 'food_name'];

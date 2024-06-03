@@ -235,7 +235,7 @@ const Rap = (props) => {
             return <div key={index} className="flex items-start gap-2.5 marginDreaptaCovAi justify-end">
               <div className="divIntrebareAi flex  max-w-[400px]  p-4 border-gray-200 rounded-l-xl rounded-tr-xl dark:bg-gray-700">
               
-                <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>
+                <p className="whitespace-pre-wrap text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>
               </div>
             </div>
           }else{

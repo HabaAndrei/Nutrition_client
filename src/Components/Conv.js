@@ -17,7 +17,7 @@ const Conv = (props) => {
   const [textInInput, setTextInInput] = useState('');
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
   const [arCuConversatii, setArCuConversatii] = useState([]);
-  const [ar_mes_stream, setAr_Mes_Stream] = useState([]);
+  const [mes_stream, setMes_Stream] = useState({mes : []});
   const [isModalOpen, setIsModalOpen] = useState({type: false});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,12 +35,20 @@ const Conv = (props) => {
   }, [props.isModalConvOpen])
 
   useEffect(()=>{
-    if(!ar_mes_stream.length)return;
+    if(!mes_stream.mes.length)return;
+    if(mes_stream.isCompleted){
+      setArrayCuMesaje((prev)=>{
+        prev[prev.length - 1].mesaj = [...mes_stream.mes].join('');
+        return [...prev];
+      });
+      setMes_Stream({mes : []});
+      return;
+    }
     setArrayCuMesaje((prev)=>{
-      prev[prev.length - 1].mesaj = [...ar_mes_stream].join('');
+      prev[prev.length - 1].mesaj = [...mes_stream.mes].join('');
       return [...prev];
     })
-  }, [ar_mes_stream])
+  }, [mes_stream]);
 
   function luamConversatiaDupaId(id_conversatie){
     axios.post(`${adresaServer}/getConvWithId`, {id_conversatie}).then((data)=>{
@@ -110,13 +118,15 @@ const Conv = (props) => {
           if(done){
             stocamMesajeleInDB(intrebare, raspunsul_stream);
             dropTokens();
-            setTimeout(()=>setAr_Mes_Stream([]), 500);
-            // setAr_Mes_Stream([]);
+            setMes_Stream(prev =>{
+              return {mes: [...prev.mes], isCompleted: true};
+            });
           }else{
             let cuv =  decoder.decode(value, {stream: true});
             raspunsul_stream += cuv;
-            setAr_Mes_Stream(prev => [...prev, cuv]);
-
+            setMes_Stream(prev =>{
+              return {mes: [...prev.mes, cuv], isCompleted: false}
+            });
             readStream();
           }
         });
@@ -239,17 +249,11 @@ const Conv = (props) => {
               </div>
             </div>
           }else{
-            
-            // return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
-            //   <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
-            //     <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>   
-            //   </div>
-            // </div>
             return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
               {index === arrayCuMesaje.length - 1 && isLoading ? 
                 <Loading/> : 
                 <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                  <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>   
+                  <p className="whitespace-pre-wrap max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">{obiect.mesaj}</p>   
                </div>
               }
             </div>

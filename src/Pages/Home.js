@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { neConectamCuGoogle,  adresaServer_ai, adresaServer,  deruleazaInJos } from '../diverse';
 import {ContextUser} from '../App.js';
 import { useNavigate } from "react-router-dom";
@@ -15,17 +15,27 @@ const Home = (props) => {
   const [user, setUser] = React.useContext(ContextUser);
   const [scrisInTextarea, setScrisInTextarea] = useState('')
   const [arrayCuMesaje, setArrayCuMesaje] = useState([]);
-  const [ar_mes_stream, setAr_Mes_Stream] = useState([]);
+  const [mes_stream, setMes_Stream] = useState({mes : []});
+
   const [isLoading, setIsLoading] = useState(false);
+  const isFinal = useRef(false);
 
 
   useEffect(()=>{
-    if(!ar_mes_stream.length)return;
+    if(!mes_stream.mes.length)return;
+    if(mes_stream.isCompleted){
+      setArrayCuMesaje((prev)=>{
+        prev[prev.length - 1].mesaj = [...mes_stream.mes].join('');
+        return [...prev];
+      });
+      setMes_Stream({mes : []});
+      return;
+    }
     setArrayCuMesaje((prev)=>{
-      prev[prev.length - 1].mesaj = [...ar_mes_stream].join('');
+      prev[prev.length - 1].mesaj = [...mes_stream.mes].join('');
       return [...prev];
     })
-  }, [ar_mes_stream])
+  }, [mes_stream]);
 
 
 
@@ -35,7 +45,6 @@ const Home = (props) => {
     if(!scrisInTextarea.length)return;
 
     setIsLoading(true);
-
     try{
       axios.post(`${adresaServer}/verificamCrediteGratis`).then((data)=>{
         
@@ -63,12 +72,15 @@ const Home = (props) => {
             function readStream(){
               reader.read().then(({done, value})=>{
                 if(done){
-                  setTimeout(()=>setAr_Mes_Stream([]), 500);
+                  setMes_Stream(prev =>{
+                    return {mes: [...prev.mes], isCompleted: true};
+                  });
                 }else{
-                  
                   let cuv =  decoder.decode(value, {stream: true});
-                  
-                  setAr_Mes_Stream(prev => [...prev, cuv]);
+
+                  setMes_Stream(prev =>{
+                    return {mes: [...prev.mes, cuv], isCompleted: false}
+                  });
 
                   readStream();
                 }
@@ -157,14 +169,15 @@ const Home = (props) => {
                 </div>
               </div>
             }else{
-              return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi ">
+              return <div key={index} className="flex items-start gap-2.5 marginStangaCovAi">
                 {index === arrayCuMesaje.length - 1 && isLoading ? 
                   <Loading/> : 
-                  <div className="  flex  max-w-[400px] p-4 border-gray-200  rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                    <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{obiect.mesaj}</p>   
+                  <div className="flex max-w-[400px] p-4 border-gray-200 rounded-e-xl rounded-es-xl dark:bg-gray-700">
+                    <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white whitespace-pre-wrap">{obiect.mesaj}</p>   
                   </div>
                 }
               </div>
+    
             } 
           })}
 
