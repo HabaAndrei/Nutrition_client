@@ -1,4 +1,4 @@
-import React, { useEffect, createContext, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Home from './Pages/Home.js';
 import Chat_page from './Pages/Chat_page.js';
 import Settings from './Pages/Settings.js';
@@ -29,7 +29,7 @@ const App = () => {
   }, []);
 
   useEffect(()=>{
-    if(!user.abonamente){
+    if(user && !user.abonamente){
       axios.post(`${adresaServer}/getDataUser_abonamente`, {email: user.email}).then((data)=>{
         setUser(prev => ({...prev, abonamente: data.data}));
       }).catch((err)=>{
@@ -38,7 +38,7 @@ const App = () => {
     }
   }, [user])
 
-
+  // console.log(user);
 
   function addNewAlert(obiectDeAdugat){
 
@@ -75,10 +75,6 @@ const App = () => {
 }
 
 export { App, ContextUser, ContextAlert}
-
-
-
-// rezolv partea cu cantritul mancarri in raport, a dat un rezultat eronat
 
 // rezolv partea cu navigarea pe pagini unde un client nu are voie!!!!!!
 

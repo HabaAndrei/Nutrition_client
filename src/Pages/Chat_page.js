@@ -10,6 +10,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import {ContextUser} from '../App.js';
 import { adresaServer } from '../diverse.js';
 import axios from 'axios';
+import Make_account from '../Components/Make_account.js';
 
 
 
@@ -38,6 +39,8 @@ const Chat_page = (props) => {
 
 
   return (
+
+     user ?
     <div className='fullPageChat'  >
  
       <div className='navbarChat' >
@@ -103,6 +106,10 @@ const Chat_page = (props) => {
       </div>
 
 
+    </div>
+    : 
+    <div>
+      <Make_account/>
     </div>
   )
 }

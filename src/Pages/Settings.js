@@ -5,12 +5,17 @@ import { useNavigate } from "react-router-dom";
 import Pay_component from '../Components/Pay_component.js';
 import Profile from '../Components/Profile.js';
 import {putParamSetPage, luamIdDinUrl, stergemParamDinUrl} from '../diverse.js'
+import Make_account from '../Components/Make_account.js';
+import {ContextUser} from '../App.js';
+
 
 const Settings = (props) => {
 
+  const [user, setUser] = React.useContext(ContextUser);
   const [isNavOpen, setIsNavOpen] = useState(true);
   const navigate = useNavigate();
   const [componentRight, setComponentRight] = useState(1);
+
 
   const obCuParams = {1 : 'profile', 2 :'pay'};
   
@@ -34,6 +39,7 @@ const Settings = (props) => {
 
   
   return (
+    user ?
     <div className='setPage'  >
 
       {isNavOpen && <div className='setPageNav ' >
@@ -82,6 +88,10 @@ const Settings = (props) => {
       </div>
 
         
+    </div> 
+    : 
+    <div>
+      <Make_account/>
     </div>
   )
 }
