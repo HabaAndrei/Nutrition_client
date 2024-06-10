@@ -76,7 +76,3 @@ const App = () => {
 
 export { App, ContextUser, ContextAlert}
 
-// rezolv partea cu navigarea pe pagini unde un client nu are voie!!!!!!
-
-// fac o functie univeral pt a stoca mesajele din cov si rap, difereta intre ele este 
-//  =>> doar la un parametru conv si rap

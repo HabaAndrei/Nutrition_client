@@ -220,9 +220,21 @@ const Conv = (props) => {
         <div className=" max_length  divide-y divide-gray-100 dark:divide-gray-700">
           {arCuConversatii.map((obiect, index)=>{
             return <a key={index} className="flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700">
-              <div className="w-full ps-3">
-                  <div  onClick={()=>luamConversatiaDupaId(obiect.id_conversatie)} className="cursor_pointer  text-gray-500 text-sm mb-1.5 dark:text-gray-400"> {obiect.mesaj.slice(0, 10)} </div>
-                  <div  onClick={()=>{setIsModalOpen({type:true, id:obiect.id_conversatie})}} style={{ display: 'flex', alignItems: 'center' }} className=" cursor_pointer text-xs text-blue-600 dark:text-blue-500">Delete <FaTrashAlt/></div>
+              <div className="w-full ps-3 flex flex-col items-center">
+                <div 
+                  onClick={() => luamConversatiaDupaId(obiect.id_conversatie)} 
+                  className="cursor_pointer text-gray-500 text-sm mb-1.5 dark:text-gray-400"
+                >
+                  {obiect.mesaj.slice(0, 15)}
+                </div>
+                <hr style={{ margin: '5px', width: '100%' }} />
+                <div 
+                  onClick={() => { setIsModalOpen({ type: true, id: obiect.id_conversatie }) }} 
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} 
+                  className="cursor_pointer text-xs text-blue-600 dark:text-blue-500"
+                >
+                  Delete <FaTrashAlt />
+                </div>
               </div>
             </a>
           })}
