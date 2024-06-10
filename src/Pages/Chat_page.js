@@ -64,7 +64,7 @@ const Chat_page = (props) => {
                     Conversatii {isModalConvOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown/> }
                   </button>
                 </li>
-                <li  >
+                <li>
                   <button  style={{ display: 'flex', alignItems: 'center' }}
                     onClick={()=>{setIsModalRapOpen(!isModalRapOpen)}}
                     id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" className="text-gray-900 dark:text-white hover:underline" >
@@ -73,7 +73,7 @@ const Chat_page = (props) => {
                 </li>
 
                 <li  >
-                  <p>{tokeni} tokens</p>              
+                  {tokeni ? <p>{tokeni} tokens</p> : <p></p>}             
                 </li>
               </ul>
             </div>
