@@ -48,7 +48,7 @@ const Home = (props) => {
     try{
       axios.post(`${adresaServer}/verificamCrediteGratis`).then((data)=>{
         
-        if(data.data[0].result >  5 /*  =>> sa mut aici 3 */){
+        if(data.data[0].result >  3 /*  =>> sa mut aici 3 */){
           props.addNewAlert({id: '1', culoare: 'yellow', mesaj: 'Unfortunately, you have already used your free messages, log in to continue using the application.'});
         }else{
           
@@ -105,8 +105,7 @@ const Home = (props) => {
   
 
   return (
-    <div  className='background' >
-
+    <div  className='background scrollbar_hiden ' >
 
       <div className='divSus' >
 

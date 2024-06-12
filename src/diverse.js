@@ -6,7 +6,7 @@ import { styled } from "@mui/system";
 
 
 
-const adresaServer = 'http://localhost:5000';
+const adresaServer = 'https://server-gxjh35rdxq-uc.a.run.app';
 const adresaServer_ai = 'http://localhost:4000';
 
 
