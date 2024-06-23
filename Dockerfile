@@ -1,15 +1,46 @@
-FROM node:20.11.0 AS development
+# FROM node:20.11.0 AS development
 
+# WORKDIR /app
+
+# EXPOSE 3000
+
+# COPY package.json /app/package.json
+# COPY package-lock.json /app/package-lock.json
+
+# RUN npm install 
+
+# COPY . /app
+
+# CMD ["npm", "start"]
+
+#####################
+#####################
+#####################
+#####################
+
+FROM node:20.11.0 AS builder
+
+# Declaring env
+ENV NODE_ENV production
+
+# Setting up the work directory
 WORKDIR /app
 
-# deschid portul pentru aplicatia mea 
-EXPOSE 3000
+# Installing dependencies
+COPY ./package.json ./
+RUN npm install
 
-COPY package.json /app/package.json
-COPY package-lock.json /app/package-lock.json
+# Copying all the files in our project
+COPY . .
 
-RUN npm install 
+# Building our application
+RUN npm run build
 
-COPY . /app
+# Fetching the latest nginx image
+FROM nginx
 
-CMD ["npm", "start"]
+# Copying built assets from builder
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Copying our nginx.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf

@@ -6,8 +6,10 @@ import { styled } from "@mui/system";
 
 
 
-const adresaServer = 'https://server-gxjh35rdxq-uc.a.run.app';
-const adresaServer_ai = 'http://localhost:4000';
+const adresaServer = process.env.REACT_APP_ADRESS_SERVER;
+const adresaServer_ai = process.env.REACT_APP_ADDRESS_AI;
+const adresaSite = process.env.REACT_APP_SITE;
+
 
 
 function milisecGreenwich() {
@@ -230,4 +232,4 @@ const VisuallyHiddenInput = styled("input")`
 
 
 
-export {calcTotalFood, makeArWithString, VisuallyHiddenInput, putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}
+export {adresaSite, calcTotalFood, makeArWithString, VisuallyHiddenInput, putParamSetPage, neConectamCuGoogle, punemAltIdInUrl, creamIdConversatie, stergemParamDinUrl, luamIdDinUrl, deruleazaInJos, adresaServer_ai, adresaServer, firebaseConfig, stergemUtilizatorul,  neDeconectam, provider, auth, milisecGreenwich}

@@ -11,12 +11,11 @@ const Pay_component = () => {
   const [user, setUser] = React.useContext(ContextUser);
   const [isModalOpen, setIsModalOpen] = useState({type: false});
 
-  const produse = [{name: 'Small package', price: 7, id: '1', tokens: 100},
-  {name: 'Mediul package', price: 12, id: '2', tokens: 300},
-  {name: 'Mediul package', price: 14, id: '3', tokens: 400},
+  const produse = [{name: 'S size', price: 7, id: '1', tokens: 100},
+  {name: 'M size', price: 12, id: '2', tokens: 300},
+  {name: 'L size', price: 14, id: '3', tokens: 400},
 
   ]
-  //product name, price, produs id
 
   function deleteSubscription(id){
     axios.post(`${adresaServer}/deleteSubscription`, {id}).then((data)=>{
